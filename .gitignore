@@ -1,3 +1,5 @@
 .idea
 *.pyc
 .gitignore
+.env
+_vacation_project/settings_local.*

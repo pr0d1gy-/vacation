@@ -141,3 +141,9 @@ CELERY_INCLUDE = ('vacation_app.tasks', )
 
 # Broker for celery (RabbitMQ)
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
+
+try:
+    from _vacation_project.settings_local import *
+except ImportError:
+    pass
