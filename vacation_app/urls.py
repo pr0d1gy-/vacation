@@ -15,9 +15,6 @@ router.register(r'vacations', VacationViewSet)
 router.register(r'mails', DeliveryViewSet)
 
 urlpatterns = [
-    url(r'user/(?P<id_user>[0-9]+)/vacation/$', VacationViewSet.as_view({
-        'get': 'list',
-    })),
     url(r'^', include(router.urls)),
     url(r'^api-token-auth/', obtain_auth_token),
 ]

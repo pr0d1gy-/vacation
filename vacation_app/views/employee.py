@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
+from rest_framework.decorators import detail_route
 
 from vacation_app.models import Employee
 from vacation_app.serializers import EmployeeSerializer
 from vacation_app.decorators import is_manager_or_admin, is_self
 from vacation_app.permissins import IsAuthenticatedOrCreateOnly
+from vacation_app.views.vacation import VacationViewSet
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
@@ -31,3 +33,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     @is_manager_or_admin
     def destroy(self, request, *args, **kwargs):
         return super(EmployeeViewSet, self).destroy(request, *args, **kwargs)
+
+    @detail_route()
+    def vacations(self, request, *args, **kwargs):
+        return VacationViewSet.as_view({'get': 'list'})(request, *args, **kwargs)
