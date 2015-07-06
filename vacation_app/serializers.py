@@ -6,17 +6,7 @@ from rest_framework import serializers
 from vacation_app.models import Vacation, Delivery, Employee
 
 
-class PasswordField(serializers.CharField):
-    def __init__(self, *args, **kwargs):
-        kwargs['write_only'] = True
-        super(PasswordField, self).__init__(*args, **kwargs)
-
-    def from_native(self, value):
-        return make_password(value)
-
-
 class EmployeeSerializer(serializers.ModelSerializer):
-    # password = PasswordField(required=False, style={'input_type': 'password'})
     email = serializers.EmailField(required=True)
 
     class Meta:
@@ -46,15 +36,12 @@ class VacationSerializer(serializers.ModelSerializer):
         model = Vacation
         fields = ['id', 'user', 'date_start', 'date_end', 'comment_user', 'comment_admin', 'state']
 
-    # def update(self, instance, validated_data):
-    #     vacation = super(VacationSerializer, self).update(instance, validated_data)
-    #     instance.save()
-    #     return instance
 
 class VacationSerializerUpdate(VacationSerializer):
     class Meta:
         model = Vacation
-        fields = ['state']
+        fields = ['state', 'comment_admin']
+
 
 class DeliverySerializer(serializers.ModelSerializer):
     class Meta:
