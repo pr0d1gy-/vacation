@@ -12,7 +12,8 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from vacation_app.models import Employee, Delivery, Vacation
-from vacation_app.serializers import EmployeeSerializer, VacationSerializer, VacationSerializerUpdate, DeliverySerializer
+from vacation_app.serializers import EmployeeSerializer, EmployeeSerializerUpdate,  VacationSerializer,\
+    VacationSerializerUpdate, DeliverySerializer
 from vacation_app.decorators import get_for_user, is_manager_or_admin, is_self
 from vacation_app.permissins import IsAdminEmployee, IsAuthenticatedOrCreateOnly
 
@@ -38,7 +39,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
     @is_self
     def update(self, request, *args, **kwargs):
-        user = get_object_or_404(Employee, pk=kwargs['pk'])
+        self.serializer_class = EmployeeSerializerUpdate
+        # user = get_object_or_404(Employee, pk=kwargs['pk'])
         request.data['group_code'] = request.user.group_code
         return super(EmployeeViewSet, self).update(request, *args, **kwargs)
 
@@ -57,12 +59,11 @@ class VacationViewSet(
     queryset = Vacation.objects.all()
     serializer_class = VacationSerializer
 
-    def dispatch(self, request, *args, **kwargs):
-        return super(VacationViewSet, self).dispatch(request, *args, **kwargs)
-
     def create(self, request, *args, **kwargs):
         request.data['user'] = self.request.user.id
         request.data['state'] = 1
+        if request.data.has_key('comment_admin'):
+            del request.data['comment_admin']
         return super(VacationViewSet, self).create(request, *args, **kwargs)
 
     @get_for_user
