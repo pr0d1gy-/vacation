@@ -1,7 +1,3 @@
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404
-
 from rest_framework import serializers
 from vacation_app.models import Vacation, Delivery, Employee
 
@@ -18,7 +14,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
             rang=validated_data['rang'],
-            group_code=0,
+            group_code=Employee.GUSER,
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -29,6 +25,15 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class EmployeeSerializerUpdate(serializers.ModelSerializer):
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    password = serializers.CharField(required=False)
+
+    class Meta:
+        model = Employee
+        fields = ['id', 'username', 'email', 'password']
 
 
 class VacationSerializer(serializers.ModelSerializer):
