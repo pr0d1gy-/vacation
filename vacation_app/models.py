@@ -71,7 +71,6 @@ def send_mails(instance, created, **kwargs):
     groups = {}
     for item in Employee.GROUPS:
         groups.update({item[0]: item[1]})
-    print groups
     if created:
         group_code = instance.user.group_code
         subject = 'vacation create by '
@@ -89,8 +88,8 @@ def send_mails(instance, created, **kwargs):
     subject += groups[group_code]
     print subject
     print message
-    # tasks.delivery_send.delay(subject=subject, message=message)
-    tasks.delivery_send(subject=subject, message=message, group_code=group_code)
+    tasks.delivery_send.delay(subject=subject, message=message, group_code=group_code)
+    # tasks.delivery_send(subject=subject, message=message, group_code=group_code)
 
 
 
