@@ -40,12 +40,12 @@ class VacationViewSet(mixins.CreateModelMixin,
 
             if date_start:
                 self.queryset = self.queryset.filter(
-                    date_start__gte=datetime.strptime(date_start, "%Y-%m-%d")
+                    date_start__gte=datetime.strptime(date_start, '%Y-%m-%d')
                 )
 
             if date_end:
                 self.queryset = self.queryset.exclude(
-                    date_end__gte=datetime.strptime(date_end, "%Y-%m-%d")
+                    date_end__gte=datetime.strptime(date_end, '%Y-%m-%d')
                 )
 
         except ValueError:
