@@ -31,34 +31,26 @@ class VacationViewSet(mixins.CreateModelMixin,
         return self.queryset
 
     def list(self, request, *args, **kwargs):
-        if kwargs.has_key('id_user'):
+        if 'id_user' in kwargs:
             self.queryset = self.queryset.filter(user=kwargs['id_user'])
 
-        else:
-            try:
-                if request.QUERY_PARAMS.has_key('start'):
-                    start_data = datetime.strptime(
-                        request.QUERY_PARAMS['start'],
-                        "%Y-%m-%d"
-                    )
+        try:
+            date_start = request.GET.get('start', None)
+            date_end = request.GET.get('end', None)
 
-                    self.queryset = self.queryset.filter(
-                        date_start__gte=start_data
-                    )
+            if date_start:
+                self.queryset = self.queryset.filter(
+                    date_start__gte=datetime.strptime(date_start, "%Y-%m-%d")
+                )
 
-                if request.QUERY_PARAMS.has_key('end'):
-                    end_data = datetime.strptime(
-                        request.QUERY_PARAMS['end'],
-                        "%Y-%m-%d"
-                    )
+            if date_end:
+                self.queryset = self.queryset.exclude(
+                    date_end__gte=datetime.strptime(date_end, "%Y-%m-%d")
+                )
 
-                    self.queryset = self.queryset.exclude(
-                        date_end__gte=end_data
-                    )
-
-            except ValueError:
-                return Response({'error': 'value is not date type'},
-                                status=status.HTTP_400_BAD_REQUEST)
+        except ValueError:
+            return Response({'error': 'Value is not date type'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         return super(VacationViewSet, self).list(request, *args, **kwargs)
 
