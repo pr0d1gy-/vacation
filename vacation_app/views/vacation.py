@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from vacation_app.models import Employee, Vacation
 from vacation_app.serializers import VacationSerializer
-from vacation_app.services.vacation import VacationService
+from vacation_app.services import VacationService
 
 
 class VacationViewSet(mixins.CreateModelMixin,
