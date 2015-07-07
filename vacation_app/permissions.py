@@ -2,6 +2,7 @@ from rest_framework import permissions
 
 from vacation_app.models import Employee
 
+
 class IsAdminEmployee(permissions.BasePermission):
     """
     Is admin in vacation_app
