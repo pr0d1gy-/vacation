@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from vacation_app.models import Vacation, Delivery, Employee
+from vacation_app.models import Employee
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -7,7 +7,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'email', 'password', 'rang', 'group_code']
+        fields = ['id', 'username', 'email', 'password',
+                  'rang', 'group_code']
 
     def create(self, validated_data):
         user = Employee.objects.create(
@@ -21,10 +22,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        user = super(EmployeeSerializer, self).update(instance, validated_data)
+        user = super(EmployeeSerializer, self).update(instance,
+                                                      validated_data)
         user.set_password(validated_data['password'])
         user.save()
         return user
+
 
 class EmployeeSerializerUpdate(serializers.ModelSerializer):
     username = serializers.CharField(required=False)
@@ -34,22 +37,3 @@ class EmployeeSerializerUpdate(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ['id', 'username', 'email', 'password']
-
-
-class VacationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vacation
-        fields = ['id', 'user', 'date_start', 'date_end', 'comment_user', 'comment_admin', 'state']
-
-
-class VacationSerializerUpdate(VacationSerializer):
-    class Meta:
-        model = Vacation
-        fields = ['state', 'comment_admin']
-
-
-class DeliverySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Delivery
-        fields = ['id', 'address', 'state', 'action_user', 'action_manager', 'action_admin', 'name']
-
