@@ -147,3 +147,7 @@ try:
     from _vacation_project.settings_local import *
 except ImportError:
     pass
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_FILE_PATH = '/' # change this to a proper location
+# from django.core.mail.backends.smtp import EmailBackend

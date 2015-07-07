@@ -35,11 +35,14 @@ def send_mails(instance, created, **kwargs):
             instance.date_start.strftime("%Y-%m-%d"),
             instance.date_end.strftime("%Y-%m-%d")
         )
-
     subject += groups[group_code]
-
-    print subject
-    print message
-
     tasks.delivery_send.delay(subject=subject, message=message, group_code=group_code)
     # tasks.delivery_send(subject=subject, message=message, group_code=group_code)
+
+
+def send_mail_result(instance, **kwargs):
+    if instance.state in [Vacation.VACATION_APPROVED_BY_ADMIN, Vacation.VACATION_REJECTED_BY_ADMIN]:
+        subject = 'Vacation'
+        message = 'Your have result for you vacation'
+        recipient_list = [instance.user.email]
+        tasks.delivery_send.delay(subject=subject, message=message, recipient_list=recipient_list)

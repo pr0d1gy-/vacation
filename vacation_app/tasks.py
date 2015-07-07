@@ -22,3 +22,7 @@ def delivery_send(subject, message, group_code):
     print recipient_list
     send_mail(subject, message, 'test@test.ua', recipient_list)
     print 'MAIL SENDED'
+
+@task(ignore_result=True, name='decision_is_made')
+def decision_is_made(subject, message, recipient_list):
+    send_mail(subject, message, 'test@test.ua', recipient_list)
