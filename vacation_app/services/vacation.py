@@ -57,6 +57,7 @@ class VacationService(object):
                     Vacation.VACATION_REJECTED_BY_ADMIN
                     ]:
                 self.errors['error'] = 'Value is not valid for admin.'
+                self.status = status.HTTP_400_BAD_REQUEST
 
                 return False
 
