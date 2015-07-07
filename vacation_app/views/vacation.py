@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from vacation_app.models import Employee, Vacation
-from vacation_app.serializers import VacationSerializer, VacationSerializerUpdate
+from vacation_app.serializers import VacationSerializer
 from vacation_app.decorators import get_for_user, is_manager_or_admin
 
 
@@ -19,14 +19,6 @@ class VacationViewSet(mixins.CreateModelMixin,
                       GenericViewSet):
     queryset = Vacation.objects.all()
     serializer_class = VacationSerializer
-
-    def dispatch(self, request, *args, **kwargs):
-        return super(VacationViewSet, self).dispatch(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        request.data['user'] = self.request.user.id
-        request.data['state'] = 1
-        return super(VacationViewSet, self).create(request, *args, **kwargs)
 
     @get_for_user
     def list(self, request, *args, **kwargs):
@@ -68,14 +60,13 @@ class VacationViewSet(mixins.CreateModelMixin,
     @is_manager_or_admin
     def update(self, request, *args, **kwargs):
         vacation = get_object_or_404(Vacation, pk=kwargs['pk'])
-        self.serializer_class = VacationSerializerUpdate
 
         if request.user.group_code == Employee.GMGER:
             if vacation.state != [Vacation.VACATION_NEW]:
                 return Response({'error': 'value can not be changed'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            if not request.data['state'] in [
+            if request.data['state'] not in [
                     Vacation.VACATION_APPROVED_BY_MANAGER,
                     Vacation.VACATION_REJECTED_BY_MANAGER
                     ]:
@@ -90,7 +81,7 @@ class VacationViewSet(mixins.CreateModelMixin,
                 return Response({'error': 'value can not be changed'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            if not request.data['state'] in [
+            if request.data['state'] not in [
                     Vacation.VACATION_APPROVED_BY_ADMIN,
                     Vacation.VACATION_REJECTED_BY_ADMIN
                     ]:
