@@ -15,14 +15,15 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
-    @is_manager_or_admin
-    def list(self, request, *args, **kwargs):
-        return super(EmployeeViewSet, self).list(request, *args, **kwargs)
+    def get_queryset(self):
+        if self.request.method == 'PUT':
+            if self.request.user.id != int(self.kwargs['pk']):
+                Response({'error': 'Only for self'}, status=status.HTTP_401_UNAUTHORIZED)
+        queryset = self.queryset
+        # if self.request.user.group_code == Employee.GUSER:
+        #     queryset = queryset.filter(username=self.request.user)
 
-    def retrieve(self, request, *args, **kwargs):
-        if request.user.group_code == Employee.GUSER:
-            self.queryset = self.queryset.filter(username=request.user)
-        return super(EmployeeViewSet, self).retrieve(request, *args, **kwargs)
+        return queryset
 
     @is_self
     def update(self, request, *args, **kwargs):
