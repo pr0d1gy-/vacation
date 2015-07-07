@@ -59,6 +59,9 @@ class Vacation(models.Model):
             })
 
     def clean(self):
+        self.clean_date_start()
+        self.clean_date_end()
+
         if not self.id:
             days = self.get_vacations_days_by_user()
             # Check used days
@@ -84,31 +87,32 @@ class Vacation(models.Model):
         return super(Vacation, self).clean()
 
     def get_vacation_days(self):
-        return (datetime.datetime(self.date_end) -
-                datetime.datetime(self.date_start)).days
+        return (self.date_end - self.date_start).days
 
     def get_vacations_days_by_user(self, user=None):
         # Get vacation for user
         queryset = Vacation.objects.filter(
             user=(self.user if not user else user)
         )
+
         # Exclude vacation for rejected status
         queryset = queryset.exclude(
-            models.Q(self.VACATION_REJECTED_BY_ADMIN) |
-            models.Q(self.VACATION_REJECTED_BY_MANAGER)
+            models.Q(state=self.VACATION_REJECTED_BY_ADMIN) |
+            models.Q(state=self.VACATION_REJECTED_BY_MANAGER)
         )
+
         # Get vacations for current year
         queryset = queryset.filter(
             date_start__gt=datetime.date(datetime.datetime.today().year, 1, 1)
         )
 
+        if not queryset:
+            return 0
+
         # calculate days
         days = 0
         for vacation in queryset:
-            diff = datetime.datetime(vacation.date_end) - \
-                datetime.datetime(vacation.date_start)
-
-            days += diff
+            days += (vacation.date_end - vacation.date_start).days
 
         return days
 
