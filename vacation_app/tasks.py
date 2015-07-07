@@ -19,10 +19,12 @@ def delivery_send(subject, message, group_code):
             elif group_code == vacation_app.models.Employee.GADMIN:
                 if item.action_admin:
                     recipient_list.append(item.address)
-    print recipient_list
-    send_mail(subject, message, 'test@test.ua', recipient_list)
+    print 'delivery_send', recipient_list
+    for i in recipient_list:
+        send_mail(subject, message, 'arseniysychev@gmail.com', [i])
     print 'MAIL SENDED'
 
-@task(ignore_result=True, name='decision_is_made')
+@task(ignore_result=True, name='decision_made')
 def decision_is_made(subject, message, recipient_list):
-    send_mail(subject, message, 'test@test.ua', recipient_list)
+    print recipient_list
+    send_mail(subject, message, 'arseniysychev@gmail.com', recipient_list)

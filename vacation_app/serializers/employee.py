@@ -15,12 +15,9 @@ class PasswordField(serializers.CharField):
 
 class EmployeeSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
-    password = PasswordField(required=False)
+    password = PasswordField()
 
     class Meta:
         model = Employee
         fields = ['id', 'username', 'email', 'password', 'rang', 'group_code']
         read_only_fields = ['group_code']
-
-    def update(self, instance, validated_data):
-        return super(EmployeeSerializer, self).update(instance, validated_data)
