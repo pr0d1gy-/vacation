@@ -13,7 +13,7 @@ class Employee(AbstractUser):
         (GADMIN, 'Admin')
     )
 
-    group_code = models.PositiveSmallIntegerField(choices=GROUPS, default=1)
+    group_code = models.PositiveSmallIntegerField(choices=GROUPS, default=GUSER)
     rang = models.CharField(max_length=20)
 
     class Meta(AbstractUser.Meta):
