@@ -5,6 +5,7 @@ from rest_framework import mixins
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from vacation_app.models import Employee, Vacation
 from vacation_app.serializers import VacationSerializer
@@ -19,6 +20,7 @@ class VacationViewSet(mixins.CreateModelMixin,
                       GenericViewSet):
     queryset = Vacation.objects.all()
     serializer_class = VacationSerializer
+    permission_classes = (IsAuthenticated,)
 
     @get_for_user
     def list(self, request, *args, **kwargs):

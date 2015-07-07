@@ -10,16 +10,16 @@ class VacationSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'date_start', 'date_end',
                   'comment_user', 'comment_admin', 'state')
 
-        read_only = ('id', 'user')
-
     def __init__(self, *args, **kwargs):
         self.action = kwargs['context']['view'].action
 
         if self.action == 'create':
-            self.Meta.read_only += ('comment_user', 'comment_admin', 'state')
+            self.Meta.read_only_fields = ('id', 'comment_user',
+                                          'comment_admin', 'state')
 
         if self.action == 'update':
-            self.Meta.read_only += ('date_start', 'date_end', 'comment_user')
+            self.Meta.read_only_fields = ('date_start', 'date_end',
+                                          'comment_user', 'user')
 
         super(VacationSerializer, self).__init__(*args, **kwargs)
 
