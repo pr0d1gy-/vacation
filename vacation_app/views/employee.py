@@ -20,6 +20,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             if self.request.user.id != int(self.kwargs['pk']):
                 Response({'error': 'Only for self'}, status=status.HTTP_401_UNAUTHORIZED)
         queryset = self.queryset
+        
         # if self.request.user.group_code == Employee.GUSER:
         #     queryset = queryset.filter(username=self.request.user)
 
