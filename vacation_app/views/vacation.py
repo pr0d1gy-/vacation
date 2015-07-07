@@ -22,6 +22,27 @@ class VacationViewSet(mixins.CreateModelMixin,
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
+        if self.action == 'list':
+
+            if 'id_user' in self.kwargs:
+                self.queryset = self.queryset.filter(user_id=self.kwargs['id_user'])
+
+            date_start = self.request.GET.get('start', None)
+            date_end = self.request.GET.get('end', None)
+
+            try:
+                if date_start:
+                    self.queryset = self.queryset.filter(
+                        date_start__gte=datetime.strptime(date_start, '%Y-%m-%d')
+                    )
+
+                if date_end:
+                    self.queryset = self.queryset.exclude(
+                        date_end__gte=datetime.strptime(date_end, '%Y-%m-%d')
+                    )
+            except ValueError:
+                pass
+
         if self.request.user.group_code not in [
             Employee.GADMIN,
             Employee.GMGER
@@ -29,30 +50,6 @@ class VacationViewSet(mixins.CreateModelMixin,
             return self.queryset.filter(user=self.request.user)
 
         return self.queryset
-
-    def list(self, request, *args, **kwargs):
-        if 'id_user' in kwargs:
-            self.queryset = self.queryset.filter(user=kwargs['id_user'])
-
-        try:
-            date_start = request.GET.get('start', None)
-            date_end = request.GET.get('end', None)
-
-            if date_start:
-                self.queryset = self.queryset.filter(
-                    date_start__gte=datetime.strptime(date_start, '%Y-%m-%d')
-                )
-
-            if date_end:
-                self.queryset = self.queryset.exclude(
-                    date_end__gte=datetime.strptime(date_end, '%Y-%m-%d')
-                )
-
-        except ValueError:
-            return Response({'error': 'Value is not date type'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        return super(VacationViewSet, self).list(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         vacation = get_object_or_404(Vacation, pk=kwargs['pk'])

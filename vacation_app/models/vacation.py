@@ -62,6 +62,13 @@ class Vacation(models.Model):
         self.clean_date_start()
         self.clean_date_end()
 
+        vacation_days = self.get_vacation_days()
+
+        if not vacation_days:
+            raise ValidationError({
+                'date_end': 'Selected vacations period is invalid.'
+            })
+
         if not self.id:
             days = self.get_vacations_days_by_user()
             # Check used days
@@ -76,7 +83,7 @@ class Vacation(models.Model):
 
             # Check available days
             available_days = self.VACATION_DAY_LIMIT - days
-            if self.get_vacation_days() > available_days:
+            if vacation_days > available_days:
                 raise ValidationError({
                     'date_end': ('Selected period is larger than allowed. '
                                  'Possible to select %s of the days.') % (
@@ -109,7 +116,7 @@ class Vacation(models.Model):
         if not queryset:
             return 0
 
-        # calculate days
+        # Calculate days
         days = 0
         for vacation in queryset:
             days += (vacation.date_end - vacation.date_start).days
