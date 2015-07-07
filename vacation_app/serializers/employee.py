@@ -1,6 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from vacation_app.models import Vacation, Delivery, Employee
+from vacation_app.models import Employee
 
 
 class PasswordField(serializers.CharField):
@@ -24,21 +24,3 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         return super(EmployeeSerializer, self).update(instance, validated_data)
-
-class VacationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vacation
-        fields = ['id', 'user', 'date_start', 'date_end', 'comment_user', 'comment_admin', 'state']
-
-
-class VacationSerializerUpdate(VacationSerializer):
-    class Meta:
-        model = Vacation
-        fields = ['state', 'comment_admin']
-
-
-class DeliverySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Delivery
-        fields = ['id', 'address', 'state', 'action_user', 'action_manager', 'action_admin', 'name']
-
