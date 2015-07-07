@@ -6,11 +6,27 @@ class VacationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vacation
-        fields = ['id', 'user', 'date_start', 'date_end',
-                  'comment_user', 'comment_admin', 'state']
 
+        fields = ('id', 'user', 'date_start', 'date_end',
+                  'comment_user', 'comment_admin', 'state')
 
-class VacationSerializerUpdate(VacationSerializer):
-    class Meta:
-        model = Vacation
-        fields = ['state', 'comment_admin']
+    def __init__(self, *args, **kwargs):
+        self.action = kwargs['context']['view'].action
+
+        if self.action == 'create':
+            self.Meta.read_only_fields = ('id', 'comment_user',
+                                          'comment_admin', 'state')
+
+        if self.action == 'update':
+            self.Meta.read_only_fields = ('date_start', 'date_end',
+                                          'comment_user', 'user')
+
+        super(VacationSerializer, self).__init__(*args, **kwargs)
+
+    def is_valid(self, raise_exception=False):
+        if self.action == 'create':
+            self.initial_data['user'] = self.context['request'].user.pk
+
+        super(VacationSerializer, self).is_valid(
+            raise_exception=raise_exception
+        )
