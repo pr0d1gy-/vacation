@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from vacation_app.models import Employee, Vacation
 from vacation_app.serializers import VacationSerializer
-from vacation_app.decorators import get_for_user, is_manager_or_admin
 
 
 class VacationViewSet(mixins.CreateModelMixin,
@@ -22,7 +21,15 @@ class VacationViewSet(mixins.CreateModelMixin,
     serializer_class = VacationSerializer
     permission_classes = (IsAuthenticated,)
 
-    @get_for_user
+    def get_queryset(self):
+        if self.request.user.group_code not in [
+            Employee.GADMIN,
+            Employee.GMGER
+                ]:
+            return self.queryset.filter(user=self.request.user)
+
+        return self.queryset
+
     def list(self, request, *args, **kwargs):
         if kwargs.has_key('id_user'):
             self.queryset = self.queryset.filter(user=kwargs['id_user'])
@@ -55,11 +62,6 @@ class VacationViewSet(mixins.CreateModelMixin,
 
         return super(VacationViewSet, self).list(request, *args, **kwargs)
 
-    @get_for_user
-    def retrieve(self, request, *args, **kwargs):
-        return super(VacationViewSet, self).retrieve(request, *args, **kwargs)
-
-    @is_manager_or_admin
     def update(self, request, *args, **kwargs):
         vacation = get_object_or_404(Vacation, pk=kwargs['pk'])
 
