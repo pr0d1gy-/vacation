@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route
+from rest_framework.response import Response
 
 from vacation_app.models import Employee
 from vacation_app.serializers import EmployeeSerializer
@@ -16,25 +17,17 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
 
     def get_queryset(self):
-        if self.request.method == 'PUT':
-            if self.request.user.id != int(self.kwargs['pk']):
-                Response({'error': 'Only for self'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = self.request.user
         queryset = self.queryset
-        
-        # if self.request.user.group_code == Employee.GUSER:
-        #     queryset = queryset.filter(username=self.request.user)
-
+        if self.request.method == 'PUT':
+            if str(user.id) != self.kwargs['pk']:
+                return
+        if self.request.method == 'DELETE':
+            if user.group_code != Employee.GADMIN:
+                return
+        if self.request.user.group_code == Employee.GUSER:
+            queryset = queryset.filter(username=self.request.user)
         return queryset
-
-    @is_self
-    def update(self, request, *args, **kwargs):
-        user = get_object_or_404(Employee, pk=kwargs['pk'])
-        request.data['group_code'] = request.user.group_code
-        return super(EmployeeViewSet, self).update(request, *args, **kwargs)
-
-    @is_manager_or_admin
-    def destroy(self, request, *args, **kwargs):
-        return super(EmployeeViewSet, self).destroy(request, *args, **kwargs)
 
     @detail_route()
     def vacations(self, request, *args, **kwargs):
