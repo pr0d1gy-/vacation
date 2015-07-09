@@ -111,6 +111,8 @@ class VacationService(object):
         if commit:
             self.vacation.save()
 
+        return self.vacation
+
     def reject_vacation(self, commit=False):
         if not self.vacation or \
                 not isinstance(self.vacation, Vacation):
@@ -128,6 +130,8 @@ class VacationService(object):
 
         if commit:
             self.vacation.save()
+
+        return self.vacation
 
     def _check_update_for_manager(self):
         if self.vacation.state != Vacation.VACATION_NEW:
