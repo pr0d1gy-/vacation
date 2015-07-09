@@ -29,10 +29,6 @@ class VacationService(object):
             raise ServiceException('Vacation must be created'
                                    ' with state `NEW`.')
 
-        if 'comment_admin' in kwargs and \
-                kwargs['comment_admin']:
-            raise ServiceException('Invalid key `comment_admin`.')
-
         vacation_params = dict()
         vacation_params['date_start'] = kwargs.pop('date_start', None)
         vacation_params['date_end'] = kwargs.pop('date_end', None)
