@@ -1,10 +1,14 @@
 from rest_framework import serializers
 from vacation_app.models import Vacation
 from vacation_app.services import VacationService, ServiceException
+
 from rest_framework.validators import ValidationError
+from rest_framework.permissions import IsAuthenticated
 
 
 class VacationSerializer(serializers.ModelSerializer):
+
+    permission_classes = (IsAuthenticated,)
 
     class Meta:
         model = Vacation
