@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 
 from vacation_app.models import Employee
-from vacation_app.serializers import EmployeeSerializer
+from vacation_app.serializers.employee import EmployeeSerializer
 from vacation_app.permissions import IsAuthenticatedOrCreateOnly
 from vacation_app.views.vacation import VacationViewSet
 

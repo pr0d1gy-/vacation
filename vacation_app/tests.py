@@ -47,63 +47,63 @@ class EmailTest(TestCase):
         self.assertEqual(mail.outbox[0].subject, 'Subject here')
 
 
-class ModelTest(TestCase):
-
-    def setUp(self):
-        user = Employee.objects.create(
-            username='user',
-            email='user@host.ua',
-            rang='develop',
-            group_code=Employee.GUSER
-        )
-        user.set_password('12345')
-        user.save()
-        mger = Employee.objects.create(
-            username='manager',
-            email='manager@host.ua',
-            rang='manager',
-            group_code=Employee.GMGER
-        )
-        mger.set_password('12345')
-        mger.save()
-        admin = Employee.objects.create(
-            username='admin',
-            password='12345',
-            email='admin@host.ua',
-            rang='administrator',
-            group_code=Employee.GADMIN
-        )
-        admin.set_password('12345')
-        admin.save()
-
-    def test_vacation_date_start_bigger_date_end(self):
-        client = Client()
-        client.login(username='user', password='12345')
-        user = Employee.objects.get(username='user')
-        date_start = datetime.datetime.strptime('2015-07-03', "%Y-%m-%d").date()
-        date_end = datetime.datetime.strptime('2015-07-02', "%Y-%m-%d").date()
-        vacation = Vacation(
-            date_start=date_start,
-            date_end=date_end
-        )
-        vacation.save()
-        print Vacation.objects.all()
-        self.assertEqual(Vacation.objects.filter(pk=vacation.id).exists(), False)
-
-    def test_vacation_delta_dates_bigger_14(self):
-        user = Employee.objects.get(username='user')
-        date_start = datetime.datetime.strptime('2015-07-01', "%Y-%m-%d").date()
-        date_end = datetime.datetime.strptime('2015-07-16', "%Y-%m-%d").date()
-        vacation = Vacation.objects.create(
-            user=user,
-            date_start=date_start,
-            date_end=date_end
-        )
-        self.assertEqual(Vacation.objects.filter(pk=vacation.id).exists(), False)
-
-    def test_update_by_manager(self):
-        client = Client()
-        client.login(username='manager', password='12345')
+# class ModelTest(TestCase):
+#
+#     def setUp(self):
+#         user = Employee.objects.create(
+#             username='user',
+#             email='user@host.ua',
+#             rang='develop',
+#             group_code=Employee.GUSER
+#         )
+#         user.set_password('12345')
+#         user.save()
+#         mger = Employee.objects.create(
+#             username='manager',
+#             email='manager@host.ua',
+#             rang='manager',
+#             group_code=Employee.GMGER
+#         )
+#         mger.set_password('12345')
+#         mger.save()
+#         admin = Employee.objects.create(
+#             username='admin',
+#             password='12345',
+#             email='admin@host.ua',
+#             rang='administrator',
+#             group_code=Employee.GADMIN
+#         )
+#         admin.set_password('12345')
+#         admin.save()
+#
+#     def test_vacation_date_start_bigger_date_end(self):
+#         client = Client()
+#         client.login(username='user', password='12345')
+#         user = Employee.objects.get(username='user')
+#         date_start = datetime.datetime.strptime('2015-07-03', "%Y-%m-%d").date()
+#         date_end = datetime.datetime.strptime('2015-07-02', "%Y-%m-%d").date()
+#         vacation = Vacation(
+#             date_start=date_start,
+#             date_end=date_end
+#         )
+#         vacation.save()
+#         print Vacation.objects.all()
+#         self.assertEqual(Vacation.objects.filter(pk=vacation.id).exists(), False)
+#
+#     def test_vacation_delta_dates_bigger_14(self):
+#         user = Employee.objects.get(username='user')
+#         date_start = datetime.datetime.strptime('2015-07-01', "%Y-%m-%d").date()
+#         date_end = datetime.datetime.strptime('2015-07-16', "%Y-%m-%d").date()
+#         vacation = Vacation.objects.create(
+#             user=user,
+#             date_start=date_start,
+#             date_end=date_end
+#         )
+#         self.assertEqual(Vacation.objects.filter(pk=vacation.id).exists(), False)
+#
+#     def test_update_by_manager(self):
+#         client = Client()
+#         client.login(username='manager', password='12345')
 
 
 class APITestsUsers(ApiUser, APITestCase):
@@ -235,3 +235,14 @@ class APITestsUsers(ApiUser, APITestCase):
             # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_vacations_unknown_create(self):
+        response = self.client.post(self.api.users, {
+            "user": 1,
+            "date_start": "2015-07-02",
+            "date_end": "2015-07-03",
+            "comment_user": "commetn",
+            "comment_admin": "commetn",
+            "state": 2
+        })
+        print response
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

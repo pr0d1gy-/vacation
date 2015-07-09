@@ -5,8 +5,9 @@ from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from vacation_app.models import Employee, Vacation
-from vacation_app.serializers import VacationSerializer
+from vacation_app.models.vacation import Vacation
+from vacation_app.models.employee import Employee
+from vacation_app.serializers.vacation import VacationSerializer
 
 
 class VacationViewSet(mixins.CreateModelMixin,
