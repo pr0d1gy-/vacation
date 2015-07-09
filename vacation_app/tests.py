@@ -82,11 +82,12 @@ class ModelTest(TestCase):
         user = Employee.objects.get(username='user')
         date_start = datetime.datetime.strptime('2015-07-03', "%Y-%m-%d").date()
         date_end = datetime.datetime.strptime('2015-07-02', "%Y-%m-%d").date()
-        vacation = Vacation.objects.create(
-            user=user,
+        vacation = Vacation(
             date_start=date_start,
             date_end=date_end
         )
+        vacation.save()
+        print Vacation.objects.all()
         self.assertEqual(Vacation.objects.filter(pk=vacation.id).exists(), False)
 
     def test_vacation_delta_dates_bigger_14(self):
