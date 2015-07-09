@@ -45,17 +45,15 @@ class VacationService(object):
                 Vacation.VACATION_APPROVED_BY_ADMIN,
                 Vacation.VACATION_APPROVED_BY_MANAGER
                 ]:
-            self.approve_vacation(commit=False)
 
-        elif state in [
+            return self.approve_vacation(commit=True)
+
+        if state in [
                 Vacation.VACATION_REJECTED_BY_ADMIN,
                 Vacation.VACATION_REJECTED_BY_MANAGER
                 ]:
-            self.reject_vacation(commit=False)
 
-        self.vacation.save()
-
-        return self.vacation
+            return self.reject_vacation(commit=True)
 
     def approve_vacation(self, commit=False):
         if not self.vacation or \
