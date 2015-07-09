@@ -56,10 +56,6 @@ class VacationService(object):
             return self.reject_vacation(commit=True)
 
     def approve_vacation(self, commit=False):
-        if not self.vacation or \
-                not isinstance(self.vacation, Vacation):
-            raise ServiceException('Vacation was not found.')
-
         if self.user.group_code == Employee.GADMIN:
             self._check_update_for_admin()
 
@@ -76,10 +72,6 @@ class VacationService(object):
         return self.vacation
 
     def reject_vacation(self, commit=False):
-        if not self.vacation or \
-                not isinstance(self.vacation, Vacation):
-            raise ServiceException('Vacation was not found.')
-
         if self.user.group_code == Employee.GADMIN:
             self._check_update_for_admin()
 
