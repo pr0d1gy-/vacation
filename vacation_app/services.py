@@ -14,7 +14,7 @@ class VacationService(object):
         self.user = kwargs.pop('user', None)
         self.vacation = kwargs.pop('vacation', None)
 
-    def add_vacation(self, date_start, date_end, comment_user):
+    def add_vacation(self, date_start, date_end, comment_user=None):
         try:
             self.vacation = Vacation(
                 user=self.user,
