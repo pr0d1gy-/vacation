@@ -24,7 +24,8 @@ class Vacation(models.Model):
     state = models.SmallIntegerField(choices=VACATIONS_STATES, default=1)
 
     def __str__(self):
-        return str(self.id) + ' ' + \
+        return \
+            str(self.id) + ' ' + \
             self.date_start.strftime("%Y-%m-%d") + '||' + \
             self.date_end.strftime("%Y-%m-%d") + ' ' + \
             self.user.username

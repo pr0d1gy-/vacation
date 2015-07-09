@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.manager import BaseManager
+from django.db.models.query import QuerySet
 
 
 class Employee(AbstractUser):
