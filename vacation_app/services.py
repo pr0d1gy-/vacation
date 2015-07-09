@@ -14,30 +14,14 @@ class VacationService(object):
         self.user = kwargs.pop('user', None)
         self.vacation = kwargs.pop('vacation', None)
 
-    def add_vacation(self, **kwargs):
-        for var in kwargs:
-            if var not in [
-                'date_start',
-                'date_end',
-                'state',
-                'comment_user'
-                    ]:
-                raise ServiceException('Wrong parameter: %s.' % var)
-
-        if 'state' in kwargs and \
-                kwargs['state'] != Vacation.VACATION_NEW:
-            raise ServiceException('Vacation must be created'
-                                   ' with state `NEW`.')
-
-        vacation_params = dict()
-        vacation_params['date_start'] = kwargs.pop('date_start', None)
-        vacation_params['date_end'] = kwargs.pop('date_end', None)
-        vacation_params['comment_user'] = kwargs.pop('comment_user', None)
-        vacation_params['user'] = self.user
-        vacation_params['state'] = Vacation.VACATION_NEW
-
+    def add_vacation(self, date_start, date_end, comment_user):
         try:
-            self.vacation = Vacation(**vacation_params).save()
+            self.vacation = Vacation(
+                user=self.user,
+                date_start=date_start,
+                date_end=date_end,
+                comment_user=comment_user
+            ).save()
         except ValidationError as e:
             raise ServiceException(e.args[0])
 
