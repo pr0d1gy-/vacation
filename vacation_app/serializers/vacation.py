@@ -8,8 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 
 class VacationSerializer(serializers.ModelSerializer):
 
-    permission_classes = (IsAuthenticated,)
-
     class Meta:
         model = Vacation
 
