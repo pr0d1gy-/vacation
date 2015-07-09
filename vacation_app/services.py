@@ -63,7 +63,7 @@ class VacationService(object):
             raise ServiceException('Vacation was not found.')
 
         if self.user.group_code == Employee.GADMIN:
-            self._check_update_form_admin()
+            self._check_update_for_admin()
 
             self.vacation.state = Vacation.VACATION_APPROVED_BY_ADMIN
 
@@ -83,7 +83,7 @@ class VacationService(object):
             raise ServiceException('Vacation was not found.')
 
         if self.user.group_code == Employee.GADMIN:
-            self._check_update_form_admin()
+            self._check_update_for_admin()
 
             self.vacation.state = Vacation.VACATION_REJECTED_BY_ADMIN
 
@@ -101,7 +101,7 @@ class VacationService(object):
         if self.vacation.state != Vacation.VACATION_NEW:
             raise ServiceException('Vacation can not be changed.')
 
-    def _check_update_form_admin(self):
+    def _check_update_for_admin(self):
         if self.vacation.state in [
             Vacation.VACATION_APPROVED_BY_ADMIN,
             Vacation.VACATION_REJECTED_BY_ADMIN
