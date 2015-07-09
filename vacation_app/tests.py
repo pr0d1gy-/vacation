@@ -15,7 +15,7 @@ from vacation_app.models.vacation import Vacation
 # ./manage.py test -v 3
 # python -Wall manage.py test -v 3
 
-class APIUrl():
+class APIUrl(object):
     vacations = '/api/vacations/'
     users = '/api/users/'
     mails = '/api/mails/'
@@ -30,7 +30,7 @@ class APIUrl():
         return self.mails + str(id) + '/'
 
 
-class ApiUser():
+class ApiUser(object):
     def login_user(self):
         user = Employee.objects.all().filter(group_code=Employee.GUSER).first()
         self.user = user
@@ -40,7 +40,6 @@ class ApiUser():
 
 class EmailTest(TestCase):
     def test_send_email(self):
-        # Send message.
         mail.send_mail('Subject here', 'Here is the message.',
             'arseniysychev@gmail.com', ['arseniys@ua.fm'],
             fail_silently=False)
