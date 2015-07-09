@@ -37,11 +37,8 @@ class VacationService(object):
 
         self.vacation = vacation
 
-        if comment_admin:
-            if self.user.group_code != Employee.GADMIN:
-                raise ServiceException('`Comment admin` field only'
-                                       ' for admin.')
-
+        if comment_admin and \
+                self.user.group_code == Employee.GADMIN:
             self.vacation.comment_admin = comment_admin
 
         if state in [
@@ -55,9 +52,6 @@ class VacationService(object):
                 Vacation.VACATION_REJECTED_BY_MANAGER
                 ]:
             self.reject_vacation(commit=False)
-
-        else:
-            raise ServiceException('State is wrong.')
 
         self.vacation.save()
 
