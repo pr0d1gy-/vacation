@@ -32,8 +32,13 @@ class VacationSerializer(serializers.ModelSerializer):
                     self.validated_data['date_end'],
                     self.validated_data.get('comment_user', None)
                 )
+
             else:
-                return service.update_vacation(self._args[0],
-                                               **self.validated_data)
+                return service.update_vacation(
+                    self._args[0],
+                    self.validated_data.get('state', None),
+                    self.validated_data.get('comment_admin', None)
+                )
+
         except ServiceException as e:
             raise ValidationError({'error': e.args[0]})

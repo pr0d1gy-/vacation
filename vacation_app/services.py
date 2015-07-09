@@ -27,25 +27,16 @@ class VacationService(object):
 
         return self.vacation
 
-    def update_vacation(self, vacation, **kwargs):
-        for var in kwargs:
-            if var not in [
-                'comment_admin',
-                'state'
-                    ]:
-                raise ServiceException('Wrong parameter: %s.' % var)
+    def update_vacation(self, vacation, state, comment_admin=None):
+        if not state:
+            raise ServiceException('State is invalid.')
 
         if self.user.group_code == Employee.GUSER:
             raise ServiceException('You have not permissions '
                                    'for update vacation.')
 
-        if not vacation or \
-                not isinstance(vacation, Vacation):
-            raise ServiceException('Vacation was not found.')
-
         self.vacation = vacation
 
-        comment_admin = kwargs.pop('comment_admin', None)
         if comment_admin:
             if self.user.group_code != Employee.GADMIN:
                 raise ServiceException('`Comment admin` field only'
@@ -53,31 +44,26 @@ class VacationService(object):
 
             self.vacation.comment_admin = comment_admin
 
-        if 'state' in kwargs and \
-                kwargs['state'] != self.vacation.state:
-            if kwargs['state'] in [
-                    Vacation.VACATION_APPROVED_BY_ADMIN,
-                    Vacation.VACATION_APPROVED_BY_MANAGER
-                    ]:
-                self.approve_vacation(commit=False)
+        if state in [
+                Vacation.VACATION_APPROVED_BY_ADMIN,
+                Vacation.VACATION_APPROVED_BY_MANAGER
+                ]:
+            self.approve_vacation(commit=False)
 
-            elif kwargs['state'] in [
-                    Vacation.VACATION_REJECTED_BY_ADMIN,
-                    Vacation.VACATION_REJECTED_BY_MANAGER
-                    ]:
-                self.reject_vacation(commit=False)
+        elif state in [
+                Vacation.VACATION_REJECTED_BY_ADMIN,
+                Vacation.VACATION_REJECTED_BY_MANAGER
+                ]:
+            self.reject_vacation(commit=False)
 
-            else:
-                raise ServiceException('State is wrong.')
         else:
-            if not comment_admin:
-                raise ServiceException('Missing parameters.')
+            raise ServiceException('State is wrong.')
 
         self.vacation.save()
 
         return self.vacation
 
-    def approve_vacation(self, commit=True):
+    def approve_vacation(self, commit=False):
         if not self.vacation or \
                 not isinstance(self.vacation, Vacation):
             raise ServiceException('Vacation was not found.')
