@@ -14,6 +14,14 @@ class VacationSerializer(serializers.ModelSerializer):
 
         read_only_fields = ('user',)
 
+    def is_valid(self, raise_exception=False):
+        if 'pk' in self.context['view'].kwargs:
+            self.Meta.read_only_fields += ('date_start', 'date_end')
+
+        return super(VacationSerializer, self).is_valid(
+            raise_exception=raise_exception
+        )
+
     def save(self, **kwargs):
         service = VacationService(user=self.context['request'].user)
 
@@ -24,4 +32,4 @@ class VacationSerializer(serializers.ModelSerializer):
                 return service.update_vacation(self._args[0],
                                                **self.validated_data)
         except ServiceException as e:
-            raise ValidationError(e.args[0])
+            raise ValidationError({'error': e.args[0]})

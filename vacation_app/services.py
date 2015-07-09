@@ -15,6 +15,15 @@ class VacationService(object):
         self.vacation = kwargs.pop('vacation', None)
 
     def add_vacation(self, **kwargs):
+        for var in kwargs:
+            if var not in [
+                'date_start',
+                'date_end',
+                'state',
+                'comment_user'
+                    ]:
+                raise ServiceException('Wrong parameter: %s.' % var)
+
         if 'state' in kwargs and \
                 kwargs['state'] != Vacation.VACATION_NEW:
             raise ServiceException('Vacation must be created'
@@ -39,6 +48,13 @@ class VacationService(object):
         return self.vacation
 
     def update_vacation(self, vacation, **kwargs):
+        for var in kwargs:
+            if var not in [
+                'comment_admin',
+                'state'
+                    ]:
+                raise ServiceException('Wrong parameter: %s.' % var)
+
         if self.user.group_code == Employee.GUSER:
             raise ServiceException('You have not permissions '
                                    'for update vacation.')
@@ -73,6 +89,9 @@ class VacationService(object):
 
             else:
                 raise ServiceException('State is wrong.')
+        else:
+            if not comment_admin:
+                raise ServiceException('Missing parameters.')
 
         self.vacation.save()
 
