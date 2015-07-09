@@ -237,12 +237,12 @@ class APITestsUsers(ApiUser, APITestCase):
 
     def test_vacations_unknown_create(self):
         response = self.client.post(self.api.users, {
-            "user": 1,
+            "user": 2,
             "date_start": "2015-07-02",
-            "date_end": "2015-07-03",
+            "date_end": "2015-07-15",
             "comment_user": "commetn",
             "comment_admin": "commetn",
-            "state": 2
+            "state": 1
         })
         print response
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
