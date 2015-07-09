@@ -30,7 +30,7 @@ class VacationSerializer(serializers.ModelSerializer):
                 return service.add_vacation(
                     self.validated_data['date_start'],
                     self.validated_data['date_end'],
-                    self.validated_data.pop('comment_user', None)
+                    self.validated_data.get('comment_user', None)
                 )
             else:
                 return service.update_vacation(self._args[0],
