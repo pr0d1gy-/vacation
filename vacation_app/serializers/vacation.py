@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from vacation_app.models import Vacation
+from vacation_app.services import VacationService, ServiceException
+from rest_framework.validators import ValidationError
 
 
 class VacationSerializer(serializers.ModelSerializer):
@@ -10,23 +12,33 @@ class VacationSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'date_start', 'date_end',
                   'comment_user', 'comment_admin', 'state')
 
-    def __init__(self, *args, **kwargs):
-        self.action = kwargs['context']['view'].action
-
-        if self.action == 'create':
-            self.Meta.read_only_fields = ('id', 'comment_user',
-                                          'comment_admin', 'state')
-
-        if self.action == 'update':
-            self.Meta.read_only_fields = ('date_start', 'date_end',
-                                          'comment_user', 'user')
-
-        super(VacationSerializer, self).__init__(*args, **kwargs)
+        read_only_fields = ('user',)
 
     def is_valid(self, raise_exception=False):
-        if self.action == 'create':
-            self.initial_data['user'] = self.context['request'].user.pk
+        if 'pk' in self.context['view'].kwargs:
+            self.Meta.read_only_fields += ('date_start', 'date_end')
 
-        super(VacationSerializer, self).is_valid(
+        return super(VacationSerializer, self).is_valid(
             raise_exception=raise_exception
         )
+
+    def save(self, **kwargs):
+        service = VacationService(user=self.context['request'].user)
+
+        try:
+            if 'pk' not in self.context['view'].kwargs:
+                return service.add_vacation(
+                    self.validated_data['date_start'],
+                    self.validated_data['date_end'],
+                    self.validated_data.get('comment_user', None)
+                )
+
+            else:
+                return service.update_vacation(
+                    self._args[0],
+                    self.validated_data.get('state', None),
+                    self.validated_data.get('comment_admin', None)
+                )
+
+        except ServiceException as e:
+            raise ValidationError({'error': e.args[0]})
