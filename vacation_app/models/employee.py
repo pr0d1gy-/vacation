@@ -13,8 +13,10 @@ class Employee(AbstractUser):
         (GADMIN, 'Admin')
     )
 
+    USERNAME_FIELD = 'email'
+
     group_code = models.PositiveSmallIntegerField(choices=GROUPS, default=GUSER)
-    rang = models.CharField(max_length=20)
+    rang = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
