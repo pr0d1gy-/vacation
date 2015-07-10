@@ -11,7 +11,7 @@ from rest_framework.test import APIRequestFactory, APIClient, APITestCase, force
 
 from vacation_app.models.employee import Employee
 from vacation_app.models.vacation import Vacation
-from vacation_app.services import VacationService
+from vacation_app.services import VacationService, ServiceException
 
 # ./manage.py test -v 3
 # python -Wall manage.py test -v 3
@@ -89,7 +89,7 @@ class TestLogicService(TestCase):
 
     def test_logic_add_vacation_user(self):
         user = Employee.objects.all().first()
-        VacationService(user=user).add_vacation(
+        vacation = VacationService(user=user).add_vacation(
             date_start=datetime.datetime.strptime('2015-08-08', "%Y-%m-%d").date(),
             date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
             comment_user='comment'
@@ -106,22 +106,83 @@ class TestLogicService(TestCase):
 
     def test_logic_add_vacation_date_start_bigger_date_end(self):
         user = Employee.objects.all().first()
-        print VacationService(user=user).add_vacation(
+        vacation = VacationService(user=user).add_vacation(
             date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
             date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
             comment_user='comment'
         )
-        self.assertEqual(len(Vacation.objects.all()), 0)
+        self.assertRaises(ServiceException, lambda: Vacation.add_vacation())
 
     def test_logic_add_vacation_delta_dates_bigger_14(self):
         user = Employee.objects.all().first()
         print VacationService(user=user).add_vacation(
+            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
+            date_end=datetime.datetime.strptime('2015-08-25', "%Y-%m-%d").date(),
+            comment_user='comment'
+        )
+        # self.assertEqual(len(Vacation.objects.all()), 0)
+        self.assertRaises(ServiceException())
+
+    def test_logic_add_vacation_summary_date_bigger_14(self):
+        user = Employee.objects.all().first()
+        vacation = VacationService(user=user).add_vacation(
+            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
+            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+            comment_user='comment'
+        )
+        self.assertEqual(len(Vacation.objects.all()), 1)
+        vacation = VacationService(user=user).add_vacation(
             date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
             date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
             comment_user='comment'
         )
         self.assertEqual(len(Vacation.objects.all()), 1)
 
+    def test_logic_add_vacation_summary_date_bigger_14_2_year(self):
+        user = Employee.objects.all().first()
+        vacation = VacationService(user=user).add_vacation(
+            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
+            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+            comment_user='comment'
+        )
+        self.assertEqual(len(Vacation.objects.all()), 1)
+        vacation = VacationService(user=user).add_vacation(
+            date_start=datetime.datetime.strptime('2016-08-10', "%Y-%m-%d").date(),
+            date_end=datetime.datetime.strptime('2016-08-24', "%Y-%m-%d").date(),
+            comment_user='comment'
+        )
+        self.assertEqual(len(Vacation.objects.all()), 2)
+
+    def test_logic_add_vacation_bad_data(self):
+        user = Employee.objects.all().first()
+        vacation = VacationService(user=user).add_vacation(
+            date_start=45,
+            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+            comment_user='comment'
+        )
+
+    def test_logic_update_vacation_by_user(self):
+        user = Employee.objects.all().filter(group_code=Employee.GUSER).first()
+        VacationService(user=user).add_vacation(
+            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
+            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+            comment_user='comment'
+        )
+        manager = Employee.objects.all().filter(group_code=Employee.GUSER).first()
+        vacation = Vacation.objects.get(user=user)
+        for state in Vacation.VACATIONS_STATES:
+
+            VacationService(user=manager).update_vacation(
+                vacation=vacation,
+                state=state[0],
+                # comment_admin='man'
+            )
+            if vacation.state in [Vacation.VACATION_APPROVED_BY_MANAGER,
+                            Vacation.VACATION_REJECTED_BY_MANAGER]:
+                continue
+            if state[0] in [Vacation.VACATION_APPROVED_BY_MANAGER,
+                            Vacation.VACATION_REJECTED_BY_MANAGER]:
+                self.assertEqual(Vacation.objects.get(user=user).state, state[0])
 
 
 class EmailTest(TestCase):
@@ -133,7 +194,7 @@ class EmailTest(TestCase):
         self.assertEqual(mail.outbox[0].subject, 'Subject here')
 
 
-class APITestsUsers(ApiUser, APITestCase):
+class APITests(ApiUser, APITestCase):
     api = APIUrl()
     login = ApiUser()
 
@@ -169,30 +230,15 @@ class APITestsUsers(ApiUser, APITestCase):
             token.save()
 
         for user in Employee.objects.all():
-            vacation = Vacation.objects.create(
-                user=user,
-                date_start=datetime.datetime.strptime('2015-08-08', "%Y-%m-%d").date(),
-                date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
-                comment_user='commetn_user',
-                comment_admin='commetn_admin',
-                state=Vacation.VACATION_NEW
-            )
-            vacation = Vacation.objects.create(
-                user=user,
-                date_start=datetime.datetime.strptime('2015-07-08', "%Y-%m-%d").date(),
-                date_end=datetime.datetime.strptime('2015-07-09', "%Y-%m-%d").date(),
-                comment_user='commetn_user',
-                comment_admin='commetn_admin',
-                state=Vacation.VACATION_APPROVED_BY_MANAGER
-            )
-            vacation = Vacation.objects.create(
-                user=user,
-                date_start=datetime.datetime.strptime('2015-08-08', "%Y-%m-%d").date(),
-                date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
-                comment_user='commetn_user',
-                comment_admin='commetn_admin',
-                state=Vacation.VACATION_APPROVED_BY_ADMIN
-            )
+            for state in Vacation.VACATIONS_STATES:
+                vacation = Vacation.objects.create(
+                    user=user,
+                    date_start=datetime.datetime.strptime('2015-08-08', "%Y-%m-%d").date(),
+                    date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
+                    comment_user='comment_user',
+                    comment_admin='comment_admin',
+                    state=state[0]
+                )
 
     def test_user_create(self):
         response = self.client.post(self.api.users, {
@@ -368,29 +414,35 @@ class APITestsUsers(ApiUser, APITestCase):
             })
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # def test_vacations_update_first_by_manager(self):
-    #     print
-    #     login_user = self.login_manager()
-    #     for vacation in Vacation.objects.all().filter(state=Vacation.VACATION_NEW):
-    #
-    #         for state in Vacation.VACATIONS_STATES:
-    #             response = self.client.put(self.api.vacations_id(vacation.id), {
-    #                 'user': vacation.user.id,
-    #                 'date_start': '2018-07-02',
-    #                 'date_end': '2018-07-15',
-    #                 'comment_user': 'commetn_manager',
-    #                 'comment_admin': 'commetn_manager',
-    #                 'state': state[0]
-    #             })
-    #             if vacation.state in [Vacation.VACATION_APPROVED_BY_MANAGER,
-    #                                 Vacation.VACATION_REJECTED_BY_MANAGER]:
-    #                 continue
-    #             if state[0] in [Vacation.VACATION_APPROVED_BY_MANAGER,
-    #                             Vacation.VACATION_REJECTED_BY_MANAGER]:
-    #                 self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #                 self.assertEqual(response.data['state'], state[0])
-    #             else:
-    #                 self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_vacations_update_first_by_manager(self):
+        print Vacation.objects.all()
+        login_user = self.login_manager()
+        for vacation in Vacation.objects.all().filter(state=Vacation.VACATION_NEW):
+
+            for state in [Vacation.VACATION_NEW,
+                          Vacation.VACATION_APPROVED_BY_ADMIN,
+                          Vacation.VACATION_REJECTED_BY_ADMIN,
+                          Vacation.VACATION_APPROVED_BY_MANAGER,
+                          Vacation.VACATION_REJECTED_BY_MANAGER]:
+                response = self.client.put(self.api.vacations_id(vacation.id), {
+                    'user': vacation.user.id,
+                    'date_start': '2018-07-02',
+                    'date_end': '2018-AT07-15',
+                    'comment_user': 'commetn_manager',
+                    'comment_admin': 'commetn_manager',
+                    'state': state[0]
+                })
+                print vacation.state
+                if vacation.state in [Vacation.VACATION_APPROVED_BY_MANAGER,
+                                    Vacation.VACATION_REJECTED_BY_MANAGER]:
+                    continue
+                if state[0] in [Vacation.VACATION_APPROVED_BY_MANAGER,
+                                Vacation.VACATION_REJECTED_BY_MANAGER]:
+                    self.assertEqual(response.status_code, status.HTTP_200_OK)
+                    self.assertEqual(response.data['state'], state[0])
+                else:
+                    # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                    pass
     #
     # def test_vacations_update_second_by_manager(self):
     #     login_user = self.login_manager()
