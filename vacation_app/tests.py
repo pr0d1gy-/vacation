@@ -1,13 +1,13 @@
 import datetime
 from django.core import mail
-from django.http import response
+
 from django.utils import timezone
 from django.test import TestCase, Client
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from rest_framework.reverse import reverse
 
-from rest_framework.test import APIRequestFactory, APIClient, APITestCase, force_authenticate
+
+from rest_framework.test import APIRequestFactory, APIClient, APITestCase
 
 from vacation_app.models.employee import Employee
 from vacation_app.models.vacation import Vacation
@@ -279,13 +279,15 @@ class APITests(ApiUser, APITestCase):
     def test_users_user_list(self):
         self.login_user()
         response = self.client.get(self.api.users)
+        print response.status_code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 1)
 
     def test_users_user_retrieve_self(self):
         login_user = self.login_user()
         response = self.client.get(self.api.users_id(login_user.id))
-        data = {key: login_user.__getattribute__(key) for (key) in response.data.keys()}
+        data = {key: login_user.__getattribute__(key) for key in response.data.keys()}
+        print data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, data)
 
@@ -314,7 +316,8 @@ class APITests(ApiUser, APITestCase):
             'rang': 'some',
             'group_code': '2'
         })
-        self.assertEqual(response.data['group_code'], Employee.GUSER)
+        print response.data['group_code'], login_user.group_code
+        self.assertEqual(response.data['group_code'], login_user.group_code)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_users_user_update_other(self):
@@ -414,35 +417,50 @@ class APITests(ApiUser, APITestCase):
             })
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_vacations_update_first_by_manager(self):
-        print Vacation.objects.all()
-        login_user = self.login_manager()
-        for vacation in Vacation.objects.all().filter(state=Vacation.VACATION_NEW):
-
+    def test_update_by_manager_permissions(self):
+        for vacation in Vacation.objects.all():
             for state in [Vacation.VACATION_NEW,
                           Vacation.VACATION_APPROVED_BY_ADMIN,
-                          Vacation.VACATION_REJECTED_BY_ADMIN,
-                          Vacation.VACATION_APPROVED_BY_MANAGER,
-                          Vacation.VACATION_REJECTED_BY_MANAGER]:
+                          Vacation.VACATION_REJECTED_BY_ADMIN]:
                 response = self.client.put(self.api.vacations_id(vacation.id), {
                     'user': vacation.user.id,
                     'date_start': '2018-07-02',
-                    'date_end': '2018-AT07-15',
+                    'date_end': '2018-07-15',
                     'comment_user': 'commetn_manager',
                     'comment_admin': 'commetn_manager',
-                    'state': state[0]
+                    'state': state
                 })
-                print vacation.state
-                if vacation.state in [Vacation.VACATION_APPROVED_BY_MANAGER,
-                                    Vacation.VACATION_REJECTED_BY_MANAGER]:
-                    continue
-                if state[0] in [Vacation.VACATION_APPROVED_BY_MANAGER,
-                                Vacation.VACATION_REJECTED_BY_MANAGER]:
-                    self.assertEqual(response.status_code, status.HTTP_200_OK)
-                    self.assertEqual(response.data['state'], state[0])
-                else:
-                    # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-                    pass
+                self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_vacations_update_first_by_manager_REJECTED_BY_MANAGER(self):
+        login_user = self.login_manager()
+        vacations = Vacation.objects.all().filter(state=Vacation.VACATION_NEW)
+        for vacation in vacations:
+            response = self.client.put(self.api.vacations_id(vacation.id), {
+                'user': vacation.user.id,
+                'date_start': '2018-07-02',
+                'date_end': '2018-07-15',
+                'comment_user': 'commetn_manager',
+                'comment_admin': 'commetn_manager',
+                'state': Vacation.VACATION_REJECTED_BY_MANAGER
+            })
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data['state'], Vacation.VACATION_REJECTED_BY_MANAGER)
+
+    def test_vacations_update_first_by_manager_APPROVED_BY_MANAGER(self):
+        login_user = self.login_manager()
+        vacations = Vacation.objects.all().filter(state=Vacation.VACATION_NEW)
+        for vacation in vacations:
+            response = self.client.put(self.api.vacations_id(vacation.id), {
+                'user': vacation.user.id,
+                'date_start': '2018-07-02',
+                'date_end': '2018-07-15',
+                'comment_user': 'commetn_manager',
+                'comment_admin': 'commetn_manager',
+                'state': Vacation.VACATION_APPROVED_BY_MANAGER
+            })
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data['state'], Vacation.VACATION_APPROVED_BY_MANAGER)
     #
     # def test_vacations_update_second_by_manager(self):
     #     login_user = self.login_manager()
