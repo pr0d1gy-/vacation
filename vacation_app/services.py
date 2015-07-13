@@ -41,19 +41,20 @@ class VacationService(object):
                 self.user.group_code == Employee.GADMIN:
             self.vacation.comment_admin = comment_admin
 
-        if state in [
-                Vacation.VACATION_APPROVED_BY_ADMIN,
-                Vacation.VACATION_APPROVED_BY_MANAGER
-                ]:
-
+        if (state == Vacation.VACATION_APPROVED_BY_ADMIN and
+            self.user.group_code == Employee.GADMIN) or \
+                (state == Vacation.VACATION_APPROVED_BY_MANAGER and
+                 self.user.group_code == Employee.GMGER):
             return self.approve_vacation(commit=True)
 
-        if state in [
-                Vacation.VACATION_REJECTED_BY_ADMIN,
-                Vacation.VACATION_REJECTED_BY_MANAGER
-                ]:
-
+        elif (state == Vacation.VACATION_REJECTED_BY_ADMIN and
+              self.user.group_code == Employee.GADMIN) or \
+                (state == Vacation.VACATION_REJECTED_BY_MANAGER and
+                 self.user.group_code == Employee.GMGER):
             return self.reject_vacation(commit=True)
+
+        else:
+            raise ServiceException('State was wrong.')
 
     def approve_vacation(self, commit=False):
         if self.user.group_code == Employee.GADMIN:

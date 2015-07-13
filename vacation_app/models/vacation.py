@@ -111,7 +111,7 @@ class Vacation(models.Model):
 
         # Get vacations for current year
         queryset = queryset.filter(
-            date_start__gt=datetime.date(datetime.datetime.today().year, 1, 1)
+            date_start__gte=datetime.date(self.date_start.year, 1, 1)
         )
 
         if not queryset:

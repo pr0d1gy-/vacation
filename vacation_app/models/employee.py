@@ -18,8 +18,11 @@ class Employee(AbstractBaseUser, PermissionsMixin):
         (GADMIN, 'Admin')
     )
 
+    USERNAME_FIELD = 'email'
+
     group_code = models.PositiveSmallIntegerField(choices=GROUPS, default=GUSER)
     rang = models.CharField(max_length=20, blank=True, null=True)
+
     username = models.CharField(_('username'), max_length=30, unique=False,
         blank=True, null=True,
         help_text=_('Required. 30 characters or fewer. Letters, digits and '
@@ -30,6 +33,7 @@ class Employee(AbstractBaseUser, PermissionsMixin):
                                         'This value may contain only letters, numbers '
                                         'and @/./+/-/_ characters.'), 'invalid'),]
         )
+
 
     email = models.EmailField(_('email address'), blank=False, unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
