@@ -3,3 +3,4 @@
 .gitignore
 .env
 _vacation_project/settings_local.*
+npm-debug.log

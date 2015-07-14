@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'djcelery',
+    'corsheaders',
     'vacation_app'
 )
 
@@ -52,6 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = '_vacation_project.urls'
@@ -142,6 +144,8 @@ CELERY_INCLUDE = ('vacation_app.tasks', )
 # Broker for celery (RabbitMQ)
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 try:
     from _vacation_project.settings_local import *

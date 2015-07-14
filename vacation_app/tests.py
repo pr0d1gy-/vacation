@@ -85,7 +85,6 @@ class TestLogicService(TestCase):
             group_code=Employee.GADMIN
         )
         admin.set_password('12345')
-        admin.save()
 
     def test_logic_add_vacation_user(self):
         user = Employee.objects.all().first()
