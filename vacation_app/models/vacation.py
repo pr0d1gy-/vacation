@@ -41,7 +41,7 @@ class Vacation(models.Model):
             str(self.id) + ' ' + \
             self.date_start.strftime("%Y-%m-%d") + '||' + \
             self.date_end.strftime("%Y-%m-%d") + ' ' + \
-            self.user.username
+            str(self.user)
 
     def clean_date_start(self):
         if self.date_start > self.date_end:
