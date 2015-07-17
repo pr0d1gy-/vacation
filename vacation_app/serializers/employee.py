@@ -9,15 +9,21 @@ class PasswordField(serializers.CharField):
         super(PasswordField, self).__init__(*args, **kwargs)
 
     def run_validation(self, data):
+        if self.context['request'].method == 'PUT':
+            self.required = False
         value = super(PasswordField, self).run_validation(data)
         return make_password(value)
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
-    password = PasswordField(required=True)
+    password = PasswordField()
 
     class Meta:
         model = Employee
         fields = ['id', 'username', 'email', 'password', 'rang', 'group_code']
         read_only_fields = ['group_code']
+
+    def is_valid(self, raise_exception=False):
+
+        return super(EmployeeSerializer, self).is_valid(raise_exception)
