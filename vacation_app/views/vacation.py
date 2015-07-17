@@ -23,9 +23,9 @@ class VacationViewSet(mixins.CreateModelMixin,
     def get_queryset(self):
         if self.action == 'list':
 
-            if 'id_user' in self.kwargs:
+            if 'pk' in self.kwargs:
                 self.queryset = self.queryset.filter(
-                    user_id=self.kwargs['id_user']
+                    user_id=self.kwargs['pk']
                 )
 
             date_start = self.request.GET.get('start', None)
