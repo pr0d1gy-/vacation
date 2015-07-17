@@ -22,7 +22,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             if user.group_code != Employee.GADMIN:
                 return
         if self.request.user.group_code == Employee.GUSER:
-            queryset = queryset.filter(username=self.request.user)
+            queryset = queryset.filter(pk=self.request.user.id)
         return queryset
 
     @detail_route()
