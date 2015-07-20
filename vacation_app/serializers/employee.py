@@ -16,7 +16,6 @@ class PasswordField(serializers.CharField):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True)
     password = PasswordField()
 
     class Meta:
