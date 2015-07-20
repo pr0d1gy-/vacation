@@ -31,7 +31,8 @@ class VacationSerializer(serializers.ModelSerializer):
             if 'pk' not in self.context['view'].kwargs:
                 return service.add_vacation(
                     self.validated_data['date_start'],
-                    self.validated_data['date_end']
+                    self.validated_data['date_end'],
+                    self.validated_data.get('comment_user', None)
                 )
 
             else:

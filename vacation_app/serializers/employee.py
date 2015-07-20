@@ -21,7 +21,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'email', 'password', 'rang', 'group_code']
+        fields = ['id', 'username', 'email', 'password', 'rang', 'group_code',
+                  'first_name', 'last_name']
         read_only_fields = ['group_code']
 
     def is_valid(self, raise_exception=False):
