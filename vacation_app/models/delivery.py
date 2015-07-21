@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Delivery(models.Model):
-    address = models.EmailField(max_length=20)
+    address = models.EmailField(max_length=20, unique=True)
     name = models.CharField(max_length=20)
     state = models.BooleanField(default=True)
     action_user = models.BooleanField(default=True)
