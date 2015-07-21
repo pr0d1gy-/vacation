@@ -1,12 +1,15 @@
 from rest_framework import serializers
+from rest_framework.validators import ValidationError
+
 from vacation_app.models import Vacation
 from vacation_app.services import VacationService, ServiceException
-from rest_framework.validators import ValidationError
+from employee import EmployeeSerializer
+
 
 
 class VacationSerializer(serializers.ModelSerializer):
 
-    user = serializers.CharField(required=False)
+    user = EmployeeSerializer(required=False)
 
     class Meta:
         model = Vacation
