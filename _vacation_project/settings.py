@@ -117,11 +117,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'PAGINATE_BY': 10,
-    'PAGE_SIZE': 10,
-    # 'DEFAULT_PARSER_CLASSES': (
-    #     'rest_framework.parsers.JSONParser',
-    # )
 }
 
 STATIC_URL = '/static/'
