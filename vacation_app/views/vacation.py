@@ -17,6 +17,7 @@ class VacationViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
                       GenericViewSet):
     queryset = Vacation.objects.all()
+    paginate_by = len(queryset)
     serializer_class = VacationSerializer
     permission_classes = (IsAuthenticated,)
 
