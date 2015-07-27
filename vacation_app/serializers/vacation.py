@@ -6,9 +6,7 @@ from vacation_app.services import VacationService, ServiceException
 from employee import EmployeeSerializer
 
 
-
 class VacationSerializer(serializers.ModelSerializer):
-
     user = serializers.CharField(required=False)
 
     class Meta:
@@ -32,23 +30,24 @@ class VacationSerializer(serializers.ModelSerializer):
             raise_exception=raise_exception
         )
 
-    def save(self, **kwargs):
+    def create(self, validated_data):
         service = VacationService(user=self.context['request'].user)
-
         try:
-            if 'pk' not in self.context['view'].kwargs:
-                return service.add_vacation(
-                    self.validated_data['date_start'],
-                    self.validated_data['date_end'],
-                    self.validated_data.get('comment_user', None)
-                )
+            return service.add_vacation(
+                validated_data['date_start'],
+                validated_data['date_end'],
+                validated_data.get('comment_user', None)
+            )
+        except ServiceException as e:
+            raise ValidationError({'error': e.args[0]})
 
-            else:
-                return service.update_vacation(
-                    self._args[0],
-                    self.validated_data.get('state', None),
-                    self.validated_data.get('comment_admin', None)
-                )
-
+    def update(self, instance, validated_data):
+        service = VacationService(user=self.context['request'].user)
+        try:
+            return service.update_vacation(
+                self.instance,
+                self.validated_data.get('state', None),
+                self.validated_data.get('comment_admin', None)
+            )
         except ServiceException as e:
             raise ValidationError({'error': e.args[0]})

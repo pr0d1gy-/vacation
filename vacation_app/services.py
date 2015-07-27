@@ -21,7 +21,8 @@ class VacationService(object):
                 date_start=date_start,
                 date_end=date_end,
                 comment_user=comment_user
-            ).save()
+            )
+            self.vacation.save()
         except ValidationError as e:
             raise ServiceException(e.args[0])
 
