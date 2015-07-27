@@ -12,7 +12,7 @@ class TokenAuthWithIdNameGroup(ObtainAuthToken):
             user = Employee.objects.get(id=token.user_id)
             response.data.update({
                 'id': user.id,
-                'username': user.username,
+                'email': user.email,
                 'group_code': user.group_code
                                   })
             return response

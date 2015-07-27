@@ -20,7 +20,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'email', 'password', 'rang', 'group_code',
+        fields = ['id', 'email', 'password', 'rang', 'group_code',
                   'first_name', 'last_name']
         read_only_fields = ['group_code']
 
