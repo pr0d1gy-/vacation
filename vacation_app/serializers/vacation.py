@@ -23,7 +23,7 @@ class VacationSerializer(serializers.ModelSerializer):
         return super(VacationSerializer, self)._get_model_fields(field_names, declared_fields, extra_kwargs)
 
     def is_valid(self, raise_exception=False):
-        if 'pk' in self.context['view'].kwargs:
+        if self.context['request'].method == 'PUT':
             self.Meta.read_only_fields += ('date_start', 'date_end')
 
         return super(VacationSerializer, self).is_valid(
