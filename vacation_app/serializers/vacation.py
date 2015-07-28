@@ -34,9 +34,9 @@ class VacationSerializer(serializers.ModelSerializer):
         service = VacationService(user=self.context['request'].user)
         try:
             return service.add_vacation(
-                validated_data['date_start'],
-                validated_data['date_end'],
-                validated_data.get('comment_user', None)
+                date_start=validated_data['date_start'],
+                date_end=validated_data['date_end'],
+                comment_user=validated_data.get('comment_user', None)
             )
         except ServiceException as e:
             raise ValidationError({'error': e.args[0]})
