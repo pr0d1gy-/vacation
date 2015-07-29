@@ -22,7 +22,8 @@ class VacationSerializer(serializers.ModelSerializer):
     def _get_model_fields(self, field_names, declared_fields, extra_kwargs):
         if self.context['request'].method == 'GET':
             declared_fields['user'] = EmployeeSerializer()
-        return super(VacationSerializer, self)._get_model_fields(field_names, declared_fields, extra_kwargs)
+        return super(VacationSerializer, self)._get_model_fields(
+            field_names, declared_fields, extra_kwargs)
 
     def is_valid(self, raise_exception=False):
         if self.context['request'].method == 'PUT':
