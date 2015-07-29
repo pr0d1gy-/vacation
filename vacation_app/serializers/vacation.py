@@ -24,7 +24,9 @@ class VacationSerializer(serializers.ModelSerializer):
 
     def is_valid(self, raise_exception=False):
         if self.context['request'].method == 'PUT':
-            self.Meta.read_only_fields += ('date_start', 'date_end')
+            # self.Meta.read_only_fields += ('date_start', 'date_end')
+            self.fields['date_start'].required = False
+            self.fields['date_end'].required = False
 
         return super(VacationSerializer, self).is_valid(
             raise_exception=raise_exception
