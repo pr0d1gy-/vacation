@@ -37,7 +37,7 @@ class Vacation(models.Model):
                                      db_index=True)
 
     class Meta:
-        unique_together = ['user', 'date_start', 'date_end', 'state']
+        unique_together = ['date_start', 'date_end', 'user', 'state']
 
     def __str__(self):
         return \

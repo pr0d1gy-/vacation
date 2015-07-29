@@ -7,15 +7,17 @@ from employee import EmployeeSerializer
 
 
 class VacationSerializer(serializers.ModelSerializer):
-    user = serializers.CharField(required=False)
+
+    user = EmployeeSerializer(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = Vacation
 
         fields = ('id', 'user', 'date_start', 'date_end',
                   'comment_user', 'comment_admin', 'state')
-
-        read_only_fields = ()
 
     def _get_model_fields(self, field_names, declared_fields, extra_kwargs):
         if self.context['request'].method == 'GET':
@@ -24,7 +26,6 @@ class VacationSerializer(serializers.ModelSerializer):
 
     def is_valid(self, raise_exception=False):
         if self.context['request'].method == 'PUT':
-            # self.Meta.read_only_fields += ('date_start', 'date_end')
             self.fields['date_start'].required = False
             self.fields['date_end'].required = False
 
