@@ -36,6 +36,9 @@ class Vacation(models.Model):
     state = models.SmallIntegerField(choices=VACATIONS_STATES, default=1,
                                      db_index=True)
 
+    class Meta:
+        unique_together = ['user', 'date_start', 'date_end', 'state']
+
     def __str__(self):
         return \
             str(self.id) + ' ' + \
