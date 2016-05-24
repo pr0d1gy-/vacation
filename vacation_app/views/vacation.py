@@ -73,7 +73,7 @@ class VacationViewSet(mixins.CreateModelMixin,
                 )
 
                 if month == 12:
-                    month = 1
+                    month = 0
                     year += 1
 
                 end = (
