@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from django.test import TestCase
 
@@ -10,6 +10,8 @@ from vacation_app.services import VacationService, ServiceException
 
 class TestLogicService(TestCase):
 
+    now = None
+
     def setUp(self):
         user = Employee.objects.create(
             username='user',
@@ -19,6 +21,7 @@ class TestLogicService(TestCase):
         )
         user.set_password('12345')
         user.save()
+
         mger = Employee.objects.create(
             username='manager',
             email='manager@host.ua',
@@ -27,6 +30,7 @@ class TestLogicService(TestCase):
         )
         mger.set_password('12345')
         mger.save()
+
         admin = Employee.objects.create(
             username='admin',
             password='12345',
@@ -37,99 +41,203 @@ class TestLogicService(TestCase):
         admin.set_password('12345')
         admin.save()
 
+        self.now = datetime.now()
+
+    def get_date(self, d=None, bigger=0):
+        return (d if d else self.now).date() if not bigger else \
+            ((d if d else self.now) + timedelta(days=bigger)).date()
+
     def test_logic_add_vacation_user(self):
         user = Employee.objects.all().first()
+
         vacation = VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-08', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
+            date_start=self.get_date(),
+            date_end=self.get_date(bigger=1),
             comment_user='comment'
         )
-        self.assertEqual(len(Vacation.objects.all()), 1)
+
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 1)
 
     def test_logic_add_vacation_unknown(self):
-        VacationService().add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-08', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
-            comment_user='comment'
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService().add_vacation(
+                date_start=self.get_date(),
+                date_end=self.get_date(bigger=1),
+                comment_user='comment'
+            )
         )
-        self.assertEqual(len(Vacation.objects.all()), 0)
+
+        self.assertEqual(Vacation.objects.count(), 0)
 
     def test_logic_add_vacation_date_start_bigger_date_end(self):
         user = Employee.objects.all().first()
-        vacation = VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
-            comment_user='comment'
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).add_vacation(
+                date_start=datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
+                date_end=datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
+                comment_user='comment'
+            )
         )
-        self.assertRaises(ServiceException, lambda: Vacation.add_vacation())
 
     def test_logic_add_vacation_delta_dates_bigger_14(self):
         user = Employee.objects.all().first()
-        print VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-25', "%Y-%m-%d").date(),
-            comment_user='comment'
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).add_vacation(
+                date_start=self.get_date(),
+                date_end=self.get_date(bigger=15),
+                comment_user='comment'
+            )
         )
-        # self.assertEqual(len(Vacation.objects.all()), 0)
-        self.assertRaises(ServiceException())
+
+        self.assertEqual(Vacation.objects.count(), 0)
 
     def test_logic_add_vacation_summary_date_bigger_14(self):
         user = Employee.objects.all().first()
+
         vacation = VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+            date_start=self.get_date(),
+            date_end=self.get_date(bigger=14),
             comment_user='comment'
         )
-        self.assertEqual(len(Vacation.objects.all()), 1)
-        vacation = VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
-            comment_user='comment'
+
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 1)
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).add_vacation(
+                date_start=self.get_date(),
+                date_end=self.get_date(bigger=3),
+                comment_user='comment'
+            )
         )
-        self.assertEqual(len(Vacation.objects.all()), 1)
+
+        self.assertEqual(Vacation.objects.count(), 1)
 
     def test_logic_add_vacation_summary_date_bigger_14_2_year(self):
         user = Employee.objects.all().first()
+
         vacation = VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+            date_start=self.get_date(),
+            date_end=self.get_date(bigger=14),
             comment_user='comment'
         )
-        self.assertEqual(len(Vacation.objects.all()), 1)
+
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 1)
+
         vacation = VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2016-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2016-08-24', "%Y-%m-%d").date(),
+            date_start=self.get_date(bigger=365),
+            date_end=self.get_date(bigger=(14 + 365)),
             comment_user='comment'
         )
-        self.assertEqual(len(Vacation.objects.all()), 2)
+
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 2)
 
     def test_logic_add_vacation_bad_data(self):
         user = Employee.objects.all().first()
-        vacation = VacationService(user=user).add_vacation(
-            date_start=45,
-            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
-            comment_user='comment'
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).add_vacation(
+                date_start=45,
+                date_end=self.get_date(),
+                comment_user='comment'
+            )
         )
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).add_vacation(
+                date_start=self.get_date(),
+                date_end=45,
+                comment_user='comment'
+            )
+        )
+
+        self.assertEqual(Vacation.objects.count(), 0)
 
     def test_logic_update_vacation_by_user(self):
-        user = Employee.objects.all().filter(group_code=Employee.GUSER).first()
-        VacationService(user=user).add_vacation(
-            date_start=datetime.datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-            date_end=datetime.datetime.strptime('2015-08-24', "%Y-%m-%d").date(),
+        user = Employee.objects.filter(group_code=Employee.GUSER).first()
+
+        vacation = VacationService(user=user).add_vacation(
+            date_start=self.get_date(),
+            date_end=self.get_date(bigger=14),
             comment_user='comment'
         )
-        manager = Employee.objects.all().filter(group_code=Employee.GUSER).first()
-        vacation = Vacation.objects.get(user=user)
-        for state in Vacation.VACATIONS_STATES:
 
-            VacationService(user=manager).update_vacation(
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 1)
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).update_vacation(
                 vacation=vacation,
-                state=state[0],
-                # comment_admin='man'
+                state=Vacation.VACATION_APPROVED_BY_MANAGER
             )
-            if vacation.state in [Vacation.VACATION_APPROVED_BY_MANAGER,
-                            Vacation.VACATION_REJECTED_BY_MANAGER]:
-                continue
-            if state[0] in [Vacation.VACATION_APPROVED_BY_MANAGER,
-                            Vacation.VACATION_REJECTED_BY_MANAGER]:
-                self.assertEqual(Vacation.objects.get(user=user).state, state[0])
+        )
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=user).update_vacation(
+                vacation=vacation,
+                state=Vacation.VACATION_APPROVED_BY_ADMIN
+            )
+        )
+
+    def test_logic_update_vacation_by_manager(self):
+        user = Employee.objects.filter(group_code=Employee.GUSER).first()
+        manager = Employee.objects.filter(group_code=Employee.GMGER).first()
+
+        vacation = VacationService(user=user).add_vacation(
+            date_start=self.get_date(),
+            date_end=self.get_date(bigger=14),
+            comment_user='comment'
+        )
+
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 1)
+
+        VacationService(user=manager).update_vacation(
+            vacation=vacation,
+            state=Vacation.VACATION_APPROVED_BY_MANAGER
+        )
+
+        self.assertEqual(Vacation.objects.get(pk=vacation.id).state,
+                         Vacation.VACATION_APPROVED_BY_MANAGER)
+
+        self.assertRaises(
+            ServiceException,
+            lambda: VacationService(user=manager).update_vacation(
+                vacation=vacation,
+                state=Vacation.VACATION_APPROVED_BY_ADMIN
+            )
+        )
+
+    def test_logic_update_vacation_by_admin(self):
+        user = Employee.objects.filter(group_code=Employee.GUSER).first()
+        admin = Employee.objects.filter(group_code=Employee.GADMIN).first()
+
+        vacation = VacationService(user=user).add_vacation(
+            date_start=self.get_date(),
+            date_end=self.get_date(bigger=14),
+            comment_user='comment'
+        )
+
+        self.assertIsInstance(vacation, Vacation)
+        self.assertEqual(Vacation.objects.count(), 1)
+
+        VacationService(user=admin).update_vacation(
+            vacation=vacation,
+            state=Vacation.VACATION_REJECTED_BY_ADMIN
+        )
+
+        self.assertEqual(Vacation.objects.get(pk=vacation.id).state,
+                         Vacation.VACATION_REJECTED_BY_ADMIN)

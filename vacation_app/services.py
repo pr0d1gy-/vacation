@@ -23,7 +23,7 @@ class VacationService(object):
                 comment_user=comment_user
             )
             self.vacation.save()
-        except ValidationError as e:
+        except (ValidationError, ValueError, TypeError) as e:
             raise ServiceException(e.args[0])
 
         return self.vacation

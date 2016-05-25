@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -147,3 +148,10 @@ try:
     from _vacation_project.settings_local import *
 except ImportError:
     pass
+
+
+if sys.argv and sys.argv[1] == 'test':
+    try:
+        from _vacation_project.settings_test import *
+    except ImportError:
+        pass
