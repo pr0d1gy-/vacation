@@ -150,7 +150,7 @@ except ImportError:
     pass
 
 
-if sys.argv and sys.argv[1] == 'test':
+if sys.argv and len(sys.argv > 0) and sys.argv[1] == 'test':
     try:
         from _vacation_project.settings_test import *
     except ImportError:
