@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 from django.test import TestCase
 
 from vacation_app.models.employee import Employee
@@ -7,45 +5,10 @@ from vacation_app.models.vacation import Vacation
 
 from vacation_app.services import VacationService, ServiceException
 
+from vacation_app.tests.utils import Utils
 
-class TestLogicService(TestCase):
 
-    now = None
-
-    def setUp(self):
-        user = Employee.objects.create(
-            username='user',
-            email='user@host.ua',
-            rang='develop',
-            group_code=Employee.GUSER
-        )
-        user.set_password('12345')
-        user.save()
-
-        mger = Employee.objects.create(
-            username='manager',
-            email='manager@host.ua',
-            rang='manager',
-            group_code=Employee.GMGER
-        )
-        mger.set_password('12345')
-        mger.save()
-
-        admin = Employee.objects.create(
-            username='admin',
-            password='12345',
-            email='admin@host.ua',
-            rang='administrator',
-            group_code=Employee.GADMIN
-        )
-        admin.set_password('12345')
-        admin.save()
-
-        self.now = datetime.now()
-
-    def get_date(self, d=None, bigger=0):
-        return (d if d else self.now).date() if not bigger else \
-            ((d if d else self.now) + timedelta(days=bigger)).date()
+class TestLogicService(Utils, TestCase):
 
     def test_logic_add_vacation_user(self):
         user = Employee.objects.all().first()
@@ -77,8 +40,8 @@ class TestLogicService(TestCase):
         self.assertRaises(
             ServiceException,
             lambda: VacationService(user=user).add_vacation(
-                date_start=datetime.strptime('2015-08-10', "%Y-%m-%d").date(),
-                date_end=datetime.strptime('2015-08-09', "%Y-%m-%d").date(),
+                date_start=self.get_date(bigger=1),
+                date_end=self.get_date(),
                 comment_user='comment'
             )
         )
