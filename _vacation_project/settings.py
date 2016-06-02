@@ -54,6 +54,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 )
 
@@ -95,7 +96,8 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Zaporozhye'
 

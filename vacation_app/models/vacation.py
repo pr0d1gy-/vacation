@@ -2,6 +2,7 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from vacation_app.models.employee import Employee
 
@@ -28,13 +29,19 @@ class Vacation(models.Model):
     )
 
     # Vacation Fields
-    user = models.ForeignKey(Employee)
-    date_start = models.DateField(db_index=True)
-    date_end = models.DateField(db_index=True)
-    comment_user = models.TextField(blank=True, null=True)
-    comment_admin = models.TextField(blank=True, null=True)
-    state = models.SmallIntegerField(choices=VACATIONS_STATES, default=1,
-                                     db_index=True)
+    user = models.ForeignKey(
+        Employee, verbose_name=_('User'))
+    date_start = models.DateField(
+        db_index=True, verbose_name=_('Date start'))
+    date_end = models.DateField(
+        db_index=True, verbose_name=_('Date end'))
+    comment_user = models.TextField(
+        blank=True, null=True, verbose_name=_('User comment'))
+    comment_admin = models.TextField(
+        blank=True, null=True, verbose_name=_('Admin comment'))
+    state = models.SmallIntegerField(
+        choices=VACATIONS_STATES, default=1, db_index=True,
+        verbose_name=_('State'))
 
     class Meta:
         unique_together = ['date_start', 'date_end', 'user', 'state']
@@ -49,7 +56,7 @@ class Vacation(models.Model):
     def clean_date_start(self):
         if self.date_start > self.date_end:
             raise ValidationError({
-                'date_start': 'Date start bigger than date end.'
+                'date_start': _('Date start bigger than date end.')
             })
 
     def clean_date_end(self):
@@ -57,7 +64,7 @@ class Vacation(models.Model):
 
         if days > self.VACATION_DAY_LIMIT:
             raise ValidationError({
-                'date_end': 'Quantity of Vacation days bigger than %s.' % (
+                'date_end': _('Quantity of Vacation days bigger than %s.') % (
                     self.VACATION_DAY_LIMIT
                 )
             })
@@ -70,7 +77,7 @@ class Vacation(models.Model):
 
         if not vacation_days:
             raise ValidationError({
-                'date_end': 'Selected vacations period is invalid.'
+                'date_end': _('Selected vacations period is invalid.')
             })
 
         if not self.id:
@@ -78,8 +85,8 @@ class Vacation(models.Model):
             # Check used days
             if days >= self.VACATION_DAY_LIMIT:
                 raise ValidationError({
-                    'date_start': ('Creating an application is not available.'
-                                   ' Days used %s of %s') % (
+                    'date_start': _('Creating an application is not available.'
+                                    ' Days used %s of %s') % (
                         days,
                         self.VACATION_DAY_LIMIT
                     )
@@ -89,8 +96,8 @@ class Vacation(models.Model):
             available_days = self.VACATION_DAY_LIMIT - days
             if vacation_days > available_days:
                 raise ValidationError({
-                    'date_end': ('Selected period is larger than allowed. '
-                                 'Possible to select %s of the days.') % (
+                    'date_end': _('Selected period is larger than allowed. '
+                                  'Possible to select %s of the days.') % (
                         available_days
                     )
                 })
