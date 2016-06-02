@@ -15,7 +15,7 @@ class Delivery(models.Model):
     action_manager = models.BooleanField(
         default=True, verbose_name=_('Action manager'))
     action_admin = models.BooleanField(
-        default=True, verbose_name=_('Acation admin'))
+        default=True, verbose_name=_('Action admin'))
 
     def __str__(self):
         return self.address
