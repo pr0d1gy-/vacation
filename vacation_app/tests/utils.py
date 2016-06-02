@@ -2,14 +2,21 @@ from datetime import datetime, timedelta
 
 from vacation_app.models.employee import Employee
 
+from rest_framework.authtoken.models import Token
+
 
 class Utils(object):
 
     now = None
 
     user = None
+    user_token = None
+    other_user = None
+    other_user_token = None
     mger = None
+    mger_token = None
     admin = None
+    admin_token = None
 
     def setUp(self):
         self.user = Employee.objects.create(
@@ -20,6 +27,17 @@ class Utils(object):
         )
         self.user.set_password('12345')
         self.user.save()
+        self.user_token = Token.objects.create(user=self.user)
+
+        self.other_user = Employee.objects.create(
+            username='other_user',
+            email='other_user@host.ua',
+            rang='develop',
+            group_code=Employee.GUSER
+        )
+        self.other_user.set_password('12345')
+        self.other_user.save()
+        self.other_user_token = Token.objects.create(user=self.other_user)
 
         self.mger = Employee.objects.create(
             username='manager',
@@ -29,6 +47,7 @@ class Utils(object):
         )
         self.mger.set_password('12345')
         self.mger.save()
+        self.mger_token = Token.objects.create(user=self.mger)
 
         self.admin = Employee.objects.create(
             username='admin',
@@ -39,6 +58,7 @@ class Utils(object):
         )
         self.admin.set_password('12345')
         self.admin.save()
+        self.admin_token = Token.objects.create(user=self.admin)
 
         self.now = datetime.now()
 
