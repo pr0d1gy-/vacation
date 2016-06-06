@@ -25,7 +25,12 @@ class VacationService(object):
             )
             self.vacation.save()
         except (ValidationError, ValueError, TypeError) as e:
-            raise ServiceException(e.args[0])
+            if isinstance(e, ValidationError):
+                msg = e.message_dict
+            else:
+                msg = e.args[0]
+
+            raise ServiceException(msg)
 
         return self.vacation
 
