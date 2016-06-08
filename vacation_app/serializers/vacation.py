@@ -25,7 +25,9 @@ class VacationSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_possible_days(obj):
-        return obj.get_vacations_days_by_user()
+        print obj.VACATION_DAY_LIMIT
+        print obj.get_vacations_days_by_user()
+        return obj.VACATION_DAY_LIMIT - obj.get_vacations_days_by_user()
 
     def _get_model_fields(self, field_names, declared_fields, extra_kwargs):
         if self.context['request'].method == 'GET':
