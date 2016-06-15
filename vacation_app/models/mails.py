@@ -10,6 +10,8 @@ def send_mails(instance, created, **kwargs):
     for item in Employee.GROUPS:
         groups.update({item[0]: item[1]})
 
+    group_code = Employee.GUSER
+
     if created:
         group_code = instance.user.group_code
         subject = 'vacation create by '
