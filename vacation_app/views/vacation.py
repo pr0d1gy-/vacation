@@ -29,30 +29,10 @@ class VacationViewSet(mixins.CreateModelMixin,
                     user_id=self.kwargs['pk']
                 )
 
-            date_start = self.request.GET.get('start', None)
-            date_end = self.request.GET.get('end', None)
             month = self.request.GET.get('month', None)
             year = self.request.GET.get('year', None)
 
-            if date_start and date_end and not month:
-                try:
-                    if date_start:
-                        self.queryset = self.queryset.filter(
-                            date_start__gte=datetime.strptime(
-                                date_start, '%Y-%m-%d'
-                            )
-                        )
-
-                    if date_end:
-                        self.queryset = self.queryset.exclude(
-                            date_end__lte=datetime.strptime(
-                                date_end, '%Y-%m-%d'
-                            )
-                        )
-                except ValueError:
-                    pass
-
-            else:
+            if month:
                 now = datetime.now()
 
                 try:

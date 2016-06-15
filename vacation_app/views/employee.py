@@ -27,4 +27,5 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
     @detail_route()
     def vacations(self, request, *args, **kwargs):
-        return VacationViewSet.as_view({'get': 'list'})(request, *args, **kwargs)
+        return VacationViewSet.as_view({'get': 'list'})(request,
+                                                        *args, **kwargs)

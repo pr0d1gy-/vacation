@@ -23,15 +23,15 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
     group_code = models.PositiveSmallIntegerField(
-        choices=GROUPS, default=GUSER)
+        choices=GROUPS, default=GUSER, verbose_name=_('Group code'))
 
     rang = models.CharField(
-        max_length=20, blank=True, null=True)
+        max_length=20, blank=True, null=True, verbose_name=_('Rang'))
 
     username = models.CharField(
         _('username'), max_length=30, unique=False, blank=True, null=True,
         help_text=_('Required. 30 characters or fewer. Letters, digits '
-                    'and @/./+/-/_ only.'),
+                    'and @/./+/-/_ only.',),
         validators=[
             validators.RegexValidator(
                 r'^[\w.@+-]+$',
@@ -41,15 +41,9 @@ class Employee(AbstractBaseUser, PermissionsMixin):
             ]
         )
 
-    email = models.EmailField(
-        _('email address'), blank=False, unique=True)
-
-    first_name = models.CharField(
-        _('first name'), max_length=30, blank=True)
-
-    last_name = models.CharField(
-        _('last name'), max_length=30, blank=True)
-
+    email = models.EmailField(_('email address'), blank=False, unique=True)
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    last_name = models.CharField(_('last name'), max_length=30, blank=True)
     is_staff = models.BooleanField(
         _('staff status'), default=False,
         help_text=_('Designates whether the user can log '
