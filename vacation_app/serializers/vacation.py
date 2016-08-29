@@ -19,9 +19,10 @@ class VacationSerializer(serializers.ModelSerializer):
         model = Vacation
 
         fields = ('id', 'user', 'date_start', 'date_end', 'possible_days',
-                  'comment_user', 'comment_admin', 'state')
+                  'comment_user', 'comment_admin', 'state', 'created_at',
+                  'updated_at')
 
-        read_only_fields = ('possible_days',)
+        read_only_fields = ('possible_days', 'created_at', 'updated_at')
 
     @staticmethod
     def get_possible_days(obj):
