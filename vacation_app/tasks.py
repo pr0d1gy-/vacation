@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
-
 from django.core.mail import send_mail
+from django.utils.timezone import datetime, timedelta
 
 from celery.task import task
 
