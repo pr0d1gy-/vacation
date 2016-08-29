@@ -152,8 +152,7 @@ CELERY_INCLUDE = ('vacation_app.tasks', )
 CELERYBEAT_SCHEDULE = {
     'clear_old_rejected_vacations': {
         'task': 'clear_old_rejected_vacations',
-        # 'schedule': crontab(minute=0, hour='*/1')
-        'schedule': crontab()
+        'schedule': crontab(minute=0, hour='*/1')
     }
 }
 
@@ -167,6 +166,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 # If None - remove on every cron tick.
 VACATION_REJECTED_DAYS_TO_REMOVE = 2
+
+
+FROM_EMAIL = 'vacations@light-it.net'
 
 
 try:

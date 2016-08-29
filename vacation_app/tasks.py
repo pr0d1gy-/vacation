@@ -1,42 +1,111 @@
+import logging
+
+from datetime import datetime, timedelta
+
 from django.core.mail import send_mail
-from django.utils.timezone import datetime, timedelta
+from django.utils.translation import ugettext as _
 
 from celery.task import task
 
 
-@task(ignore_result=True, name='delivery_send')
-def delivery_send(subject, message, group_code):
-    from vacation_app.models import Delivery, Employee
+log = logging.getLogger()
 
-    delivery = Delivery.objects.all()
+
+@task(ignore_result=True, name='notification_update_vacations')
+def notification_update_vacations(vacation_id):
+    from vacation_app.models import Delivery, Vacation
+    from _vacation_project.settings import FROM_EMAIL
+
+    try:
+        vacation = Vacation.objects.get(pk=vacation_id)
+        is_notify_user = False
+    except Vacation.DoesNotExist:
+        log.error('Vacation with `%s` id was not found.' % vacation_id)
+        return None
+
+    deliveries = Delivery.objects.filter(state=True)
+
+    if vacation.state in [Vacation.VACATION_REJECTED_BY_ADMIN,
+                          Vacation.VACATION_APPROVED_BY_ADMIN]:
+        # Filter delivery for admin's changes
+        deliveries = deliveries.filter(action_admin=True)
+        is_notify_user = True
+
+    elif vacation.state in [Vacation.VACATION_APPROVED_BY_MANAGER,
+                            Vacation.VACATION_REJECTED_BY_MANAGER]:
+        # Filter delivery for manager's changes
+        deliveries = deliveries.filter(action_manager=True)
+
+    else:
+        log.warning('Unknown state `%s` in vacation `%s`.' % (
+            vacation.state,
+            vacation.pk
+        ))
+        return None
+
+    if is_notify_user:
+        # Send notification to User
+        vacation.user.email_user(
+            subject=_('Vacations'),
+            message=_('Your have result for you vacation'),
+            from_email=FROM_EMAIL
+        )
+
     recipient_list = []
-    for item in delivery:
-        if not item.state:
-            continue
+    for delivery in deliveries:
+        recipient_list.append(delivery.address)
 
-        if group_code == Employee.GUSER:
-            if item.action_user:
-                recipient_list.append(item.address)
-
-        elif group_code == Employee.GMGER:
-            if item.action_manager:
-                recipient_list.append(item.address)
-
-        elif group_code == Employee.GADMIN:
-            if item.action_admin:
-                recipient_list.append(item.address)
-
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email='vacation@sub1.lt01test.tk',
+    return send_mail(
+        subject=_('Vacation created by %s was updated %s ') % (
+            vacation.user.get_full_name(),
+            _('by admin') if is_notify_user else _('by manager')
+        ),
+        message=_('Vacation %s - %s for %s is updated') % (
+            vacation.user.get_full_name(),
+            vacation.date_start.strftime('%Y-%m-%d'),
+            vacation.date_end.strftime('%Y-%m-%d'),
+        ),
+        from_email=FROM_EMAIL,
         recipient_list=recipient_list
     )
 
 
-@task(ignore_result=True, name='mail_vacation_change')
-def mail_vacation_change():
-    pass
+@task(ignore_result=True, name='notification_create_vacations')
+def notification_create_vacations(vacation_id):
+    from vacation_app.models import Delivery, Vacation
+    from _vacation_project.settings import FROM_EMAIL
+
+    try:
+        vacation = Vacation.objects.filter(pk=vacation_id)\
+            .select_related('user').first()
+    except Vacation.DoesNotExist:
+        log.error('Vacation with `%s` id was not found.' % vacation_id)
+        return None
+
+    vacation.user.email_user(
+        subject=_('Vacations'),
+        message=_('You vacation was successfully created.'),
+        from_email=FROM_EMAIL
+    )
+
+    recipient_list = []
+    deliveries = Delivery.objects.filter(
+        state=True,
+        action_user=True
+    )
+    for delivery in deliveries:
+        recipient_list.append(delivery.address)
+
+    return send_mail(
+        subject=_('Vacation created by %s') % vacation.user.get_full_name(),
+        message=_('%s created new vacation %s - %s') % (
+            vacation.user.get_full_name(),
+            vacation.date_start.strftime('%Y-%m-%d'),
+            vacation.date_end.strftime('%Y-%m-%d'),
+        ),
+        from_email=FROM_EMAIL,
+        recipient_list=recipient_list
+    )
 
 
 @task(ignore_result=True, name='clear_old_rejected_vacations')

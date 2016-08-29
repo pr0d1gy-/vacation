@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from vacation_app.models.employee import Employee
+from vacation_app.signals.vacation import vacation_post_save
 
 
 class Vacation(models.Model):
@@ -152,3 +153,13 @@ class Vacation(models.Model):
             using=using,
             update_fields=update_fields
         )
+
+
+# --- SIGNALS ---
+
+models.signals.post_save.connect(
+    receiver=vacation_post_save,
+    sender=Vacation,
+    weak=False,
+    dispatch_uid='vacation_post_save'
+)

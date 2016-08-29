@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 14:14+0300\n"
+"POT-Creation-Date: 2016-08-29 16:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr "Аддресс"
 msgid "Name"
 msgstr "Имя"
 
-#: vacation_app/models/delivery.py:12 vacation_app/models/vacation.py:44
+#: vacation_app/models/delivery.py:12 vacation_app/models/vacation.py:49
 msgid "State"
 msgstr "Состояние"
 
@@ -111,61 +111,64 @@ msgstr "Пользователь"
 msgid "users"
 msgstr "Пользователи"
 
-#: vacation_app/models/mails.py:53 vacation_app/models/vacation.py:48
-msgid "Vacation"
-msgstr "Отпуск"
-
-#: vacation_app/models/mails.py:54
-#, fuzzy
-#| msgid "You have not permissions for update vacation."
-msgid "Your have result for you vacation"
-msgstr "У Вас недостаточно прав для редактирования отпуска."
-
-#: vacation_app/models/vacation.py:33
+#: vacation_app/models/vacation.py:34
 msgid "User"
 msgstr "Пользователь"
 
-#: vacation_app/models/vacation.py:35
+#: vacation_app/models/vacation.py:36
 msgid "Date start"
 msgstr "Начальная дата"
 
-#: vacation_app/models/vacation.py:37
+#: vacation_app/models/vacation.py:38
 msgid "Date end"
 msgstr "Конечная дата"
 
-#: vacation_app/models/vacation.py:39
+#: vacation_app/models/vacation.py:40
 msgid "User comment"
 msgstr "Комментарий пользователя"
 
-#: vacation_app/models/vacation.py:41
+#: vacation_app/models/vacation.py:42
 msgid "Admin comment"
 msgstr "Комментарий администратора"
 
-#: vacation_app/models/vacation.py:49
+#: vacation_app/models/vacation.py:44
+msgid "Created at"
+msgstr "Создано"
+
+#: vacation_app/models/vacation.py:46
+msgid "Updated at"
+msgstr "Обновлено"
+
+#: vacation_app/models/vacation.py:54
+msgid "Vacation"
+msgstr "Отпуск"
+
+#: vacation_app/models/vacation.py:55 vacation_app/tasks.py:49
+#: vacation_app/tasks.py:86
 #, fuzzy
 #| msgid "Action user"
 msgid "Vacations"
 msgstr "Отпуска"
 
-#: vacation_app/models/vacation.py:61
+#: vacation_app/models/vacation.py:67
 msgid "Date start bigger than date end."
 msgstr "Начальная дата больше конечной даты."
 
-#: vacation_app/models/vacation.py:69
+#: vacation_app/models/vacation.py:75
 #, python-format
 msgid "Quantity of Vacation days bigger than %s."
 msgstr "Колличество дней отпуска больше, чем %s."
 
-#: vacation_app/models/vacation.py:82
+#: vacation_app/models/vacation.py:88
 msgid "Selected vacations period is invalid."
 msgstr "Выбранный период отпуска не правильный."
 
-#: vacation_app/models/vacation.py:90
+#: vacation_app/models/vacation.py:96
 #, python-format
 msgid "Creating an application is not available. Days used %s of %s"
 msgstr "Создание запроса не доступно. Дней использовано %s из %s"
 
-#: vacation_app/models/vacation.py:101
+#: vacation_app/models/vacation.py:107
 #, python-format
 msgid ""
 "Selected period is larger than allowed. Possible to select %s of the days."
@@ -186,3 +189,46 @@ msgstr "Неверное состояние."
 #: vacation_app/services.py:100 vacation_app/services.py:107
 msgid "Vacation can not be changed."
 msgstr "Отпуск не может быть изменён."
+
+#: vacation_app/tasks.py:50
+#, fuzzy
+#| msgid "You have not permissions for update vacation."
+msgid "Your have result for you vacation"
+msgstr "У Вас недостаточно прав для редактирования отпуска."
+
+#: vacation_app/tasks.py:59
+#, python-format
+msgid "Vacation created by %s was updated %s "
+msgstr "Отпуск созданный %s был обновлён %s "
+
+#: vacation_app/tasks.py:61
+#, fuzzy
+#| msgid "Action admin"
+msgid "by admin"
+msgstr "администратором"
+
+#: vacation_app/tasks.py:61
+#, fuzzy
+#| msgid "Action manager"
+msgid "by manager"
+msgstr "менеджером"
+
+#: vacation_app/tasks.py:63
+#, python-format
+msgid "Vacation %s - %s for %s is updated"
+msgstr "Отпуск с %s по %s для %s был обновлён"
+
+#: vacation_app/tasks.py:87
+msgid "You vacation was successfully created."
+msgstr "Ваша заявка на отпуск успешно принята."
+
+#: vacation_app/tasks.py:100
+#, fuzzy, python-format
+#| msgid "Vacation can not be changed."
+msgid "Vacation created by %s"
+msgstr "Отпуск создан %s"
+
+#: vacation_app/tasks.py:101
+#, python-format
+msgid "%s created new vacation %s - %s"
+msgstr "%s создал новую заявку на отпуск с %s по %s"

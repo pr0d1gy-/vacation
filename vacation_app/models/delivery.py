@@ -9,13 +9,13 @@ class Delivery(models.Model):
     name = models.CharField(
         max_length=20, verbose_name=_('Name'))
     state = models.BooleanField(
-        default=True, verbose_name=_('State'))
+        default=True, db_index=True, verbose_name=_('State'))
     action_user = models.BooleanField(
-        default=True, verbose_name=_('Action user'))
+        default=True, db_index=True, verbose_name=_('Action user'))
     action_manager = models.BooleanField(
-        default=True, verbose_name=_('Action manager'))
+        default=True, db_index=True, verbose_name=_('Action manager'))
     action_admin = models.BooleanField(
-        default=True, verbose_name=_('Action admin'))
+        default=True, db_index=True, verbose_name=_('Action admin'))
 
     def __str__(self):
         return self.address

@@ -103,5 +103,3 @@ def employee_pre_save(**kwargs):
         if not instance.password or \
                 not instance.password.startswith('pbkdf2_sha256$'):
             instance.set_password(instance.password)
-
-# Employee._meta.get_field('email')._unique = True
