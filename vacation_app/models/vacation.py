@@ -41,9 +41,9 @@ class Vacation(models.Model):
     comment_admin = models.TextField(
         blank=True, null=True, verbose_name=_('Admin comment'))
     created_at = models.DateTimeField(
-        auto_created=True, verbose_name=_('Created at'))
+        auto_created=True, blank=True, verbose_name=_('Created at'))
     updated_at = models.DateTimeField(
-        auto_now_add=True, verbose_name=_('Updated at'))
+        auto_now_add=True, blank=True, verbose_name=_('Updated at'))
     state = models.SmallIntegerField(
         choices=VACATIONS_STATES, default=1, db_index=True,
         verbose_name=_('State'))
