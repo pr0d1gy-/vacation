@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import sys
+import djcelery
+
+from celery.schedules import crontab
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -140,18 +144,30 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-import djcelery
-
 djcelery.setup_loader()
 
 CELERY_IMPORTS = ('vacation_app.tasks', )
 CELERY_INCLUDE = ('vacation_app.tasks', )
+
+CELERYBEAT_SCHEDULE = {
+    'clear_old_rejected_vacations': {
+        'task': 'clear_old_rejected_vacations',
+        # 'schedule': crontab(minute=0, hour='*/1')
+        'schedule': crontab()
+    }
+}
+
 
 # Broker for celery (RabbitMQ)
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+
+# If None - remove on every cron tick.
+VACATION_REJECTED_DAYS_TO_REMOVE = 2
+
 
 try:
     from _vacation_project.settings_local import *

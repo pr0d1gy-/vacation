@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-02 17:00+0300\n"
+"POT-Creation-Date: 2016-06-15 14:14+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,8 +64,8 @@ msgid ""
 "Enter a valid username. This value may contain only letters, numbers and @/./"
 "+/-/_ characters."
 msgstr ""
-"Введите правильное имя пользователя. Может содержать только буквы, цифры и"
-"@/./+/-/_."
+"Введите правильное имя пользователя. Может содержать только буквы, цифры "
+"и@/./+/-/_."
 
 #: vacation_app/models/employee.py:44
 msgid "email address"
@@ -96,8 +96,8 @@ msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
-"Обозначает должен ли пользователь рассматриваться как активный. "
-"Снемите галочку вместо удаления учетной записи."
+"Обозначает должен ли пользователь рассматриваться как активный. Снемите "
+"галочку вместо удаления учетной записи."
 
 #: vacation_app/models/employee.py:58
 msgid "date joined"
@@ -110,6 +110,16 @@ msgstr "Пользователь"
 #: vacation_app/models/employee.py:95
 msgid "users"
 msgstr "Пользователи"
+
+#: vacation_app/models/mails.py:53 vacation_app/models/vacation.py:48
+msgid "Vacation"
+msgstr "Отпуск"
+
+#: vacation_app/models/mails.py:54
+#, fuzzy
+#| msgid "You have not permissions for update vacation."
+msgid "Your have result for you vacation"
+msgstr "У Вас недостаточно прав для редактирования отпуска."
 
 #: vacation_app/models/vacation.py:33
 msgid "User"
@@ -131,43 +141,48 @@ msgstr "Комментарий пользователя"
 msgid "Admin comment"
 msgstr "Комментарий администратора"
 
-#: vacation_app/models/vacation.py:59
+#: vacation_app/models/vacation.py:49
+#, fuzzy
+#| msgid "Action user"
+msgid "Vacations"
+msgstr "Отпуска"
+
+#: vacation_app/models/vacation.py:61
 msgid "Date start bigger than date end."
 msgstr "Начальная дата больше конечной даты."
 
-#: vacation_app/models/vacation.py:67
+#: vacation_app/models/vacation.py:69
 #, python-format
 msgid "Quantity of Vacation days bigger than %s."
 msgstr "Колличество дней отпуска больше, чем %s."
 
-#: vacation_app/models/vacation.py:80
+#: vacation_app/models/vacation.py:82
 msgid "Selected vacations period is invalid."
 msgstr "Выбранный период отпуска не правильный."
 
-#: vacation_app/models/vacation.py:88
+#: vacation_app/models/vacation.py:90
 #, python-format
 msgid "Creating an application is not available. Days used %s of %s"
 msgstr "Создание запроса не доступно. Дней использовано %s из %s"
 
-#: vacation_app/models/vacation.py:99
+#: vacation_app/models/vacation.py:101
 #, python-format
 msgid ""
 "Selected period is larger than allowed. Possible to select %s of the days."
-msgstr ""
-"Выбранный период больше допустимого. Возможный период %s дней."
+msgstr "Выбранный период больше допустимого. Возможный период %s дней."
 
-#: vacation_app/services.py:34
+#: vacation_app/services.py:39
 msgid "State is invalid."
 msgstr "Неверное состояние."
 
-#: vacation_app/services.py:37
+#: vacation_app/services.py:42
 msgid "You have not permissions for update vacation."
 msgstr "У Вас недостаточно прав для редактирования отпуска."
 
-#: vacation_app/services.py:59
+#: vacation_app/services.py:64
 msgid "State was wrong."
 msgstr "Неверное состояние."
 
-#: vacation_app/services.py:95 vacation_app/services.py:102
+#: vacation_app/services.py:100 vacation_app/services.py:107
 msgid "Vacation can not be changed."
 msgstr "Отпуск не может быть изменён."

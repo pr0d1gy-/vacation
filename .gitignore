@@ -1,7 +1,8 @@
 .idea
 *.pyc
-.gitignore
 .env
 _vacation_project/settings_local.*
 npm-debug.log
 supervisor.log
+celerybeat-schedule
+test_vacation

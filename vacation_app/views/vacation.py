@@ -13,7 +13,6 @@ from vacation_app.serializers.vacation import VacationSerializer
 class VacationViewSet(mixins.CreateModelMixin,
                       mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
-                      # mixins.DestroyModelMixin,
                       mixins.ListModelMixin,
                       GenericViewSet):
     queryset = Vacation.objects.all()

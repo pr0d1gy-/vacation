@@ -39,12 +39,19 @@ class Vacation(models.Model):
         blank=True, null=True, verbose_name=_('User comment'))
     comment_admin = models.TextField(
         blank=True, null=True, verbose_name=_('Admin comment'))
+    created_at = models.DateTimeField(
+        auto_created=True, verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(
+        auto_now_add=True, verbose_name=_('Updated at'))
     state = models.SmallIntegerField(
         choices=VACATIONS_STATES, default=1, db_index=True,
         verbose_name=_('State'))
 
     class Meta:
         unique_together = ['date_start', 'date_end', 'user', 'state']
+
+        verbose_name = _('Vacation')
+        verbose_name_plural = _('Vacations')
 
     def __str__(self):
         return \
