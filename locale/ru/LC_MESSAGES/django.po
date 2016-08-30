@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-29 16:22+0300\n"
+"POT-Creation-Date: 2016-08-30 09:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,7 +144,7 @@ msgid "Vacation"
 msgstr "Отпуск"
 
 #: vacation_app/models/vacation.py:55 vacation_app/tasks.py:49
-#: vacation_app/tasks.py:86
+#: vacation_app/tasks.py:89
 #, fuzzy
 #| msgid "Action user"
 msgid "Vacations"
@@ -196,39 +196,39 @@ msgstr "Отпуск не может быть изменён."
 msgid "Your have result for you vacation"
 msgstr "У Вас недостаточно прав для редактирования отпуска."
 
-#: vacation_app/tasks.py:59
-#, python-format
-msgid "Vacation created by %s was updated %s "
-msgstr "Отпуск созданный %s был обновлён %s "
-
-#: vacation_app/tasks.py:61
+#: vacation_app/tasks.py:58
 #, fuzzy
 #| msgid "Action admin"
 msgid "by admin"
 msgstr "администратором"
 
-#: vacation_app/tasks.py:61
+#: vacation_app/tasks.py:59
 #, fuzzy
 #| msgid "Action manager"
 msgid "by manager"
 msgstr "менеджером"
 
-#: vacation_app/tasks.py:63
+#: vacation_app/tasks.py:62
+#, python-format
+msgid "Vacation created by %s was updated %s "
+msgstr "Отпуск созданный %s был обновлён %s "
+
+#: vacation_app/tasks.py:66
 #, python-format
 msgid "Vacation %s - %s for %s is updated"
 msgstr "Отпуск с %s по %s для %s был обновлён"
 
-#: vacation_app/tasks.py:87
+#: vacation_app/tasks.py:90
 msgid "You vacation was successfully created."
 msgstr "Ваша заявка на отпуск успешно принята."
 
-#: vacation_app/tasks.py:100
+#: vacation_app/tasks.py:103
 #, fuzzy, python-format
 #| msgid "Vacation can not be changed."
 msgid "Vacation created by %s"
 msgstr "Отпуск создан %s"
 
-#: vacation_app/tasks.py:101
+#: vacation_app/tasks.py:104
 #, python-format
 msgid "%s created new vacation %s - %s"
 msgstr "%s создал новую заявку на отпуск с %s по %s"
