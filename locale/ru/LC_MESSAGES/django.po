@@ -190,7 +190,7 @@ msgstr "Отпуск не может быть изменён."
 
 #: vacation_app/tasks.py:50
 msgid "Your have result for you vacation"
-msgstr "Появился результат по Вашей заявки на отпуск."
+msgstr "Появился результат по Вашей заявке на отпуск."
 
 #: vacation_app/tasks.py:58
 msgid "by admin"
@@ -217,7 +217,7 @@ msgstr "Ваша заявка на отпуск успешно принята."
 #: vacation_app/tasks.py:103
 #, python-format
 msgid "Vacation created by %s"
-msgstr "Отпуск создан %s"
+msgstr "%s создал заявку на отпуск"
 
 #: vacation_app/tasks.py:104
 #, python-format

@@ -55,13 +55,10 @@ def notification_update_vacations(vacation_id):
     for delivery in deliveries:
         recipient_list.append(delivery.address)
 
-    by_admin = _('by admin')
-    by_manager = _('by manager')
-
     return send_mail(
         subject=_('Vacation created by %s was updated %s ') % (
             vacation.user.get_full_name(),
-            by_admin if is_notify_user else by_manager
+            _('by admin') if is_notify_user else _('by manager')
         ),
         message=_('Vacation %s - %s for %s is updated') % (
             vacation.user.get_full_name(),
