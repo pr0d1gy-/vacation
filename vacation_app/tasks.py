@@ -57,11 +57,11 @@ def notification_update_vacations(vacation_id):
 
     return send_mail(
         subject=_('Vacation created by %s was updated %s ') % (
-            vacation.user.get_full_name(),
+            vacation.user.get_full_name() or vacation.user.email,
             _('by admin') if is_notify_user else _('by manager')
         ),
         message=_('Vacation %s - %s for %s is updated') % (
-            vacation.user.get_full_name(),
+            vacation.user.get_full_name() or vacation.user.email,
             vacation.date_start.strftime('%Y-%m-%d'),
             vacation.date_end.strftime('%Y-%m-%d'),
         ),
@@ -97,9 +97,10 @@ def notification_create_vacations(vacation_id):
         recipient_list.append(delivery.address)
 
     return send_mail(
-        subject=_('Vacation created by %s') % vacation.user.get_full_name(),
+        subject=_('Vacation created by %s') % (
+            vacation.user.get_full_name() or vacation.user.email),
         message=_('%s created new vacation %s - %s') % (
-            vacation.user.get_full_name(),
+            vacation.user.get_full_name() or vacation.user.email,
             vacation.date_start.strftime('%Y-%m-%d'),
             vacation.date_end.strftime('%Y-%m-%d'),
         ),
