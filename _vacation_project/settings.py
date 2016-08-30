@@ -172,7 +172,7 @@ FROM_EMAIL = 'vacations@light-it.net'
 
 # Logging settings
 LOG_FILE_PATH = os.path.join(BASE_DIR, 'vacation.log')
-LOG_FILE_MAX_BYTES = 10000
+LOG_FILE_MAX_BYTES = 1024*1024*10  # 10mb
 LOG_FILE_BACKUP_COUNT = 3
 
 LOGGING = {
