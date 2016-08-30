@@ -198,13 +198,13 @@ msgstr "У Вас недостаточно прав для редактиров�
 
 #: vacation_app/tasks.py:58
 #, fuzzy
-#| msgid "Action admin"
+#| msgid "by admin"
 msgid "by admin"
 msgstr "администратором"
 
 #: vacation_app/tasks.py:59
 #, fuzzy
-#| msgid "Action manager"
+#| msgid "by manager"
 msgid "by manager"
 msgstr "менеджером"
 
