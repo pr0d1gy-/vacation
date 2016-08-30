@@ -1,11 +1,8 @@
 from rest_framework import status
-
-
 from rest_framework.test import APITestCase
 
 from vacation_app.models.employee import Employee
 from vacation_app.models.vacation import Vacation
-
 from vacation_app.tests.api_url import APIUrl
 from vacation_app.tests.api_user import ApiUser
 from vacation_app.tests.utils import Utils

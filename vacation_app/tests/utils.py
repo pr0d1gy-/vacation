@@ -1,6 +1,10 @@
 from datetime import datetime, timedelta
 
+from django.db.models import signals
+
 from vacation_app.models.employee import Employee
+from vacation_app.models.vacation import Vacation
+from vacation_app.signals.vacation import vacation_post_save
 
 from rest_framework.authtoken.models import Token
 
@@ -61,6 +65,13 @@ class Utils(object):
         self.admin_token = Token.objects.create(user=self.admin)
 
         self.now = datetime.now()
+
+        signals.post_save.disconnect(
+            receiver=vacation_post_save,
+            sender=Vacation,
+            weak=True,
+            dispatch_uid='vacation_post_save'
+        )
 
     def get_date(self, d=None, bigger=0):
         return (d if d else self.now).date() if not bigger else \

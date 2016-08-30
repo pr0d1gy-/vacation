@@ -2,9 +2,7 @@ from django.test import TestCase
 
 from vacation_app.models.employee import Employee
 from vacation_app.models.vacation import Vacation
-
 from vacation_app.services import VacationService, ServiceException
-
 from vacation_app.tests.utils import Utils
 
 
