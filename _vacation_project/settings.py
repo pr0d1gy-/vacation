@@ -170,6 +170,39 @@ VACATION_REJECTED_DAYS_TO_REMOVE = 2
 
 FROM_EMAIL = 'vacations@light-it.net'
 
+# Logging settings
+LOG_FILE_PATH = os.path.join(BASE_DIR, 'vacation.log')
+LOG_FILE_MAX_BYTES = 10000
+LOG_FILE_BACKUP_COUNT = 3
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        }
+    },
+    'handlers': {
+        'rotating_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_FILE_PATH,
+            'mode': 'w',
+            'maxBytes': LOG_FILE_MAX_BYTES,
+            'backupCount': LOG_FILE_BACKUP_COUNT,
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['rotating_file'],
+            'level': 'ERROR',
+            'propagate': True
+        }
+    }
+}
+
 
 try:
     from _vacation_project.settings_local import *

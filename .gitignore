@@ -6,3 +6,4 @@ npm-debug.log
 supervisor.log
 celerybeat-schedule
 test_vacation
+vacation.log
