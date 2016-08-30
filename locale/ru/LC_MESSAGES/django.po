@@ -145,8 +145,6 @@ msgstr "Отпуск"
 
 #: vacation_app/models/vacation.py:55 vacation_app/tasks.py:49
 #: vacation_app/tasks.py:89
-#, fuzzy
-#| msgid "Action user"
 msgid "Vacations"
 msgstr "Отпуска"
 
@@ -191,20 +189,14 @@ msgid "Vacation can not be changed."
 msgstr "Отпуск не может быть изменён."
 
 #: vacation_app/tasks.py:50
-#, fuzzy
-#| msgid "You have not permissions for update vacation."
 msgid "Your have result for you vacation"
-msgstr "У Вас недостаточно прав для редактирования отпуска."
+msgstr "Появился результат по Вашей заявки на отпуск."
 
 #: vacation_app/tasks.py:58
-#, fuzzy
-#| msgid "by admin"
 msgid "by admin"
 msgstr "администратором"
 
 #: vacation_app/tasks.py:59
-#, fuzzy
-#| msgid "by manager"
 msgid "by manager"
 msgstr "менеджером"
 
@@ -223,8 +215,7 @@ msgid "You vacation was successfully created."
 msgstr "Ваша заявка на отпуск успешно принята."
 
 #: vacation_app/tasks.py:103
-#, fuzzy, python-format
-#| msgid "Vacation can not be changed."
+#, python-format
 msgid "Vacation created by %s"
 msgstr "Отпуск создан %s"
 
