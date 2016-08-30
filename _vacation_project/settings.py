@@ -158,7 +158,7 @@ CELERYBEAT_SCHEDULE = {
 
 
 # Broker for celery (RabbitMQ)
-BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
